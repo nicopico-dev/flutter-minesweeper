@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -10,13 +12,22 @@ class CellData {
 
 enum CellState { covered, uncovered, marked }
 
-class MineCell extends StatelessWidget {
-  final CellData cellData;
+List<CellData> plantBombs(int length, double bombPercent) {
+  var bombsLeft = length * bombPercent;
+  var cellsLeft = length;
 
-  MineCell(this.cellData);
+  final cellIndexes = List<int>.generate(length, (i) => i)..shuffle();
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+  final cells = List<CellData>(length);
+  for (var i in cellIndexes) {
+    double r = Random().nextDouble();
+    double bombProbability = bombsLeft / cellsLeft;
+    bool hasBomb = r <= bombProbability;
+    cells[i] = CellData(bomb: hasBomb);
+
+    cellsLeft -= 1;
+    if (hasBomb) bombsLeft -= 1;
   }
+
+  return cells;
 }

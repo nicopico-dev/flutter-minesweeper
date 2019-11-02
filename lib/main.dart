@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'cell.dart';
 import 'minefield.dart';
 
 void main() => runApp(MyApp());
@@ -21,7 +22,16 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  bool _dirty;
+  List<CellData> _cellsData;
+  int _width = 10;
+  int _height = 10;
+  double _bombPercent = 0.15;
+
+  @override
+  void initState() {
+    super.initState();
+    this._cellsData = plantBombs(_width * _height, _bombPercent);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +41,22 @@ class _GameScreenState extends State<GameScreen> {
         children: <Widget>[
           RaisedButton(
             child: Text("Restart"),
-            onPressed: _restart,
+            onPressed: this.restart,
           ),
           SizedBox(height: 16),
-          Minefield(width: 10, height: 10),
+          Minefield(
+            width: _width,
+            height: _height,
+            cellsData: _cellsData,
+          ),
         ],
       ),
     );
   }
 
-  void _restart() {
-    // TODO
+  void restart() {
+    setState(() {
+      this._cellsData = plantBombs(_width * _height, _bombPercent);
+    });
   }
 }
