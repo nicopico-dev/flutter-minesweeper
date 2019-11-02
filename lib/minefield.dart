@@ -20,9 +20,9 @@ class Minefield extends StatelessWidget {
     for (int row = 0; row < height; row++) {
       final cells = <Widget>[];
       for (int col = 0; col < width; col++) {
-        int i = row * col;
+        int cellIndex = row * 10 + col;
         cells.add(
-          TableCell(child: MineCell(cellsData[i])),
+          TableCell(child: MineCell(cellsData[cellIndex])),
         );
       }
       rows.add(TableRow(children: cells));
