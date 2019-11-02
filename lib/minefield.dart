@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:minesweeper/cell.dart';
 
-class Minefield extends StatelessWidget {
-  static const double cellSize = 30;
+const double CELL_SIZE = 30;
 
+class Minefield extends StatelessWidget {
   final int width;
   final int height;
   final List<CellData> cellsData;
@@ -22,19 +22,14 @@ class Minefield extends StatelessWidget {
       for (int col = 0; col < width; col++) {
         int i = row * col;
         cells.add(
-          TableCell(
-            child: Container(
-              height: cellSize,
-              child: MineCell(cellsData[i]),
-            ),
-          ),
+          TableCell(child: MineCell(cellsData[i])),
         );
       }
       rows.add(TableRow(children: cells));
     }
     return Table(
       border: TableBorder.all(),
-      defaultColumnWidth: FixedColumnWidth(cellSize),
+      defaultColumnWidth: FixedColumnWidth(CELL_SIZE),
       children: rows,
     );
   }
@@ -47,8 +42,15 @@ class MineCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(cellData.bomb ? "X" : ""),
+    return Container(
+      height: CELL_SIZE,
+      width: CELL_SIZE,
+      child: Center(
+        child: Text(
+          cellData.bomb ? "X" : "",
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
     );
   }
 }

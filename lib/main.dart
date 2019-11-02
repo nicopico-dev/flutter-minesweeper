@@ -35,21 +35,23 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          RaisedButton(
-            child: Text("Restart"),
-            onPressed: this.restart,
-          ),
-          SizedBox(height: 16),
-          Minefield(
-            width: _width,
-            height: _height,
-            cellsData: _cellsData,
-          ),
-        ],
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              child: Text("Restart"),
+              onPressed: this.restart,
+            ),
+            SizedBox(height: 16),
+            Minefield(
+              width: _width,
+              height: _height,
+              cellsData: _cellsData,
+            ),
+          ],
+        ),
       ),
     );
   }
