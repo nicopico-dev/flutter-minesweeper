@@ -10,7 +10,7 @@ class CellData {
   CellData({@required this.bomb, this.state = CellState.covered});
 }
 
-enum CellState { covered, uncovered, marked }
+enum CellState { covered, uncovered, flagged }
 
 List<CellData> plantBombs(int length, double bombPercent) {
   var bombsLeft = length * bombPercent;
@@ -30,4 +30,32 @@ List<CellData> plantBombs(int length, double bombPercent) {
   }
 
   return cells;
+}
+
+int countNeighborBombs(
+  int fieldWidth,
+  List<CellData> cellsData,
+  int cellIndex,
+) {
+  final int row = (cellIndex / 10).floor();
+  final int col = cellIndex - (row * 10);
+
+  final rightMost = fieldWidth - 1;
+  final bottomMost = (cellsData.length / fieldWidth) - 1;
+
+  List<int> neighborIndexes = [];
+  if (row > 0) {
+    if (col > 0) neighborIndexes.add(cellIndex - 11); // top-left
+    neighborIndexes.add(cellIndex - 10); // top-center
+    if (col < rightMost) neighborIndexes.add(cellIndex - 9); // top-right
+  }
+  if (col > 0) neighborIndexes.add(cellIndex - 1); // left
+  if (col < rightMost) neighborIndexes.add(cellIndex + 1); // right
+  if (row < bottomMost) {
+    if (col > 0) neighborIndexes.add(cellIndex + 9); // bottom-left
+    neighborIndexes.add(cellIndex + 10); // bottom-center
+    if (col < rightMost) neighborIndexes.add(cellIndex + 11); // bottom-right
+  }
+
+  return neighborIndexes.where((i) => cellsData[i].bomb).length;
 }

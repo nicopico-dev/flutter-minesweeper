@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:minesweeper/cell.dart';
 
 const double CELL_SIZE = 30;
 const double BEZEL_SIZE = 2;
+const double LABEL_SIZE = 18;
 
 class Minefield extends StatelessWidget {
   final int width;
@@ -22,8 +25,16 @@ class Minefield extends StatelessWidget {
       final cells = <Widget>[];
       for (int col = 0; col < width; col++) {
         int cellIndex = row * 10 + col;
+        // TODO Defer neighborBomb computation until needed
+        int neighborBombs = countNeighborBombs(
+          this.width,
+          this.cellsData,
+          cellIndex,
+        );
         cells.add(
-          TableCell(child: MineCell(cellsData[cellIndex])),
+          TableCell(
+            child: MineCell(this.cellsData[cellIndex], neighborBombs),
+          ),
         );
       }
       rows.add(TableRow(children: cells));
@@ -38,28 +49,49 @@ class Minefield extends StatelessWidget {
 
 class MineCell extends StatelessWidget {
   final CellData cellData;
+  final int neighborBombs;
 
-  MineCell(this.cellData);
+  MineCell(this.cellData, this.neighborBombs);
 
   @override
   Widget build(BuildContext context) {
+    // TODO Use standard widgets for text and bitmaps
     return CustomPaint(
       size: Size.square(CELL_SIZE),
-      painter: _CellPainter(cellData),
+      painter: _CellPainter(cellData, neighborBombs),
     );
   }
 }
 
 class _CellPainter extends CustomPainter {
   CellData cellData;
+  int neighborBombs;
 
   final Color bgPaint = const Color(0xFFBDBDBD);
 
-  _CellPainter(this.cellData);
+  _CellPainter(this.cellData, this.neighborBombs);
 
   @override
   void paint(Canvas canvas, Size size) {
-    drawUncovered(canvas, size);
+    switch (cellData.state) {
+      case CellState.covered:
+        _drawCovered(canvas, size);
+        break;
+
+      case CellState.uncovered:
+        _drawUncovered(canvas, size);
+        if (cellData.bomb) {
+          _drawBomb(canvas, size);
+        } else if (neighborBombs > 0) {
+          _drawNeighborBombs(canvas, size);
+        }
+        break;
+
+      case CellState.flagged:
+        _drawCovered(canvas, size);
+        _drawFlag(canvas, size);
+        break;
+    }
   }
 
   @override
@@ -67,7 +99,7 @@ class _CellPainter extends CustomPainter {
     return oldDelegate.cellData != cellData;
   }
 
-  void drawUncovered(Canvas canvas, Size size) {
+  void _drawCovered(Canvas canvas, Size size) {
     // Background
     var paint = Paint()
       ..color = const Color(0xFFBDBBBE)
@@ -90,7 +122,7 @@ class _CellPainter extends CustomPainter {
 
     // Bottom-right
     paint = Paint()
-      ..color = Color(0xFF7D797C)
+      ..color = const Color(0xFF7D797C)
       ..style = PaintingStyle.stroke
       ..strokeWidth = BEZEL_SIZE;
 
@@ -100,5 +132,63 @@ class _CellPainter extends CustomPainter {
     path.relativeLineTo(0, size.height - 2 * BEZEL_SIZE);
     path.relativeLineTo(-size.width + 2 * BEZEL_SIZE, 0);
     canvas.drawPath(path, paint);
+  }
+
+  void _drawUncovered(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = const Color(0xFFBDBDBD)
+      ..style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+  }
+
+  void _drawFlag(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+    var path = Path();
+    path.moveTo(size.width / 2, 4);
+    path.relativeLineTo(0, size.height - 8);
+    canvas.drawPath(path, paint);
+  }
+
+  void _drawBomb(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      Offset(size.width / 2, size.height / 2),
+      size.width / 3,
+      paint,
+    );
+  }
+
+  static const BOMBS_TEXT_COLORS = <Color>[
+    Colors.blue,
+    Colors.green,
+    Colors.red
+  ];
+
+  void _drawNeighborBombs(Canvas canvas, Size size) {
+    final bombTextColorIndex =
+        min(this.neighborBombs, BOMBS_TEXT_COLORS.length) - 1;
+    final textPainter = (String text) => TextPainter(
+          text: TextSpan(
+            text: text,
+            style: TextStyle(
+              color: BOMBS_TEXT_COLORS[bombTextColorIndex],
+              fontSize: LABEL_SIZE,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+        );
+    textPainter(this.neighborBombs.toString())
+      ..layout(minWidth: size.width, maxWidth: size.width)
+      ..paint(
+        canvas,
+        Offset(0, LABEL_SIZE / 4),
+      );
   }
 }
