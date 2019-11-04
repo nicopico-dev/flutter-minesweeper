@@ -30,6 +30,10 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
+    this._initialize();
+  }
+
+  void _initialize() {
     this._cellsData = plantBombs(_width * _height, _bombPercent);
   }
 
@@ -58,7 +62,7 @@ class _GameScreenState extends State<GameScreen> {
 
   void restart() {
     setState(() {
-      this._cellsData = plantBombs(_width * _height, _bombPercent);
+      this._initialize();
     });
   }
 }
