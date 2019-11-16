@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'cell.dart';
+import 'cell_data.dart';
 import 'minefield.dart';
 
 void main() => runApp(MyApp());
