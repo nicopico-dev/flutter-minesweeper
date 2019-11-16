@@ -7,7 +7,7 @@ class CellData {
   final bool bomb;
   final CellState state;
 
-  CellData({@required this.bomb, this.state = CellState.covered});
+  const CellData({@required this.bomb, this.state = CellState.covered});
 }
 
 enum CellState { covered, uncovered, flagged }

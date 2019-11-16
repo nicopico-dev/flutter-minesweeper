@@ -12,7 +12,7 @@ class Minefield extends StatelessWidget {
   final int height;
   final List<CellData> cellsData;
 
-  Minefield({
+  const Minefield({
     @required this.width,
     @required this.height,
     @required this.cellsData,
@@ -51,7 +51,7 @@ class MineCell extends StatelessWidget {
   final CellData cellData;
   final int neighborBombs;
 
-  MineCell(this.cellData, this.neighborBombs);
+  const MineCell(this.cellData, this.neighborBombs);
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +64,12 @@ class MineCell extends StatelessWidget {
 }
 
 class _CellPainter extends CustomPainter {
-  CellData cellData;
-  int neighborBombs;
+  final CellData cellData;
+  final int neighborBombs;
 
   final Color bgPaint = const Color(0xFFBDBDBD);
 
-  _CellPainter(this.cellData, this.neighborBombs);
+  const _CellPainter(this.cellData, this.neighborBombs);
 
   @override
   void paint(Canvas canvas, Size size) {

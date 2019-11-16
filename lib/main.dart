@@ -22,10 +22,10 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  final int _width = 10;
+  final int _height = 10;
+  final double _bombPercent = 0.15;
   List<CellData> _cellsData;
-  int _width = 10;
-  int _height = 10;
-  double _bombPercent = 0.15;
 
   @override
   void initState() {
