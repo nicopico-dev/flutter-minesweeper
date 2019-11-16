@@ -47,18 +47,25 @@ class Minefield extends StatelessWidget {
   }
 }
 
-class MineCell extends StatelessWidget {
+class MineCell extends StatefulWidget {
   final CellData cellData;
   final int neighborBombs;
 
   const MineCell(this.cellData, this.neighborBombs);
 
   @override
+  _MineCellState createState() => _MineCellState();
+}
+
+class _MineCellState extends State<MineCell> {
+  bool pressed = false;
+
+  @override
   Widget build(BuildContext context) {
     // TODO Use standard widgets for text and bitmaps
     return CustomPaint(
       size: Size.square(CELL_SIZE),
-      painter: _CellPainter(cellData, neighborBombs),
+      painter: _CellPainter(widget.cellData, widget.neighborBombs, pressed),
     );
   }
 }
@@ -66,16 +73,21 @@ class MineCell extends StatelessWidget {
 class _CellPainter extends CustomPainter {
   final CellData cellData;
   final int neighborBombs;
+  final bool pressed;
 
   final Color bgPaint = const Color(0xFFBDBDBD);
 
-  const _CellPainter(this.cellData, this.neighborBombs);
+  const _CellPainter(this.cellData, this.neighborBombs, this.pressed);
 
   @override
   void paint(Canvas canvas, Size size) {
     switch (cellData.state) {
       case CellState.covered:
-        _drawCovered(canvas, size);
+        if (pressed) {
+          _drawUncovered(canvas, size);
+        } else {
+          _drawCovered(canvas, size);
+        }
         break;
 
       case CellState.uncovered:
