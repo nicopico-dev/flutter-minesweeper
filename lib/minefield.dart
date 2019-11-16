@@ -63,10 +63,29 @@ class _MineCellState extends State<MineCell> {
   @override
   Widget build(BuildContext context) {
     // TODO Use standard widgets for text and bitmaps
-    return CustomPaint(
+    print("build with pressed $pressed");
+    var cell = CustomPaint(
       size: Size.square(CELL_SIZE),
       painter: _CellPainter(widget.cellData, widget.neighborBombs, pressed),
     );
+
+    if (widget.cellData.state == CellState.covered) {
+      return GestureDetector(
+        onTapDown: this._onPressed,
+        onTapUp: this._onPressed,
+        onTapCancel: this._onPressed,
+        child: cell,
+      );
+    } else {
+      return cell;
+    }
+  }
+
+  void _onPressed([details]) {
+    print("onPressed: $details");
+    setState(() {
+      this.pressed = details is TapDownDetails;
+    });
   }
 }
 
@@ -83,6 +102,7 @@ class _CellPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     switch (cellData.state) {
       case CellState.covered:
+        print("paint pressed? $pressed");
         if (pressed) {
           _drawUncovered(canvas, size);
         } else {
@@ -108,7 +128,7 @@ class _CellPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_CellPainter oldDelegate) {
-    return oldDelegate.cellData != cellData;
+    return oldDelegate.cellData != cellData || oldDelegate.pressed != pressed;
   }
 
   void _drawCovered(Canvas canvas, Size size) {
