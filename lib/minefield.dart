@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:minesweeper/cell_data.dart';
 import 'package:provider/provider.dart';
 
+import 'cell_data.dart';
 import 'cell_painter.dart';
 import 'game_state.dart';
 
@@ -58,26 +58,23 @@ class _MineCellState extends State<MineCell> {
       painter: CellPainter(cellData, pressed),
     );
 
-    if (cellData.state == CellState.covered) {
+    GameState game = Provider.of<GameState>(context, listen: false);
+    bool isCovered = cellData.state == CellState.covered;
+    bool isMarked = cellData.state == CellState.marked;
+
+    bool canPlay = (isCovered || isMarked) && game.status == GameStatus.Play;
+
+    if (canPlay) {
       return GestureDetector(
         onTapDown: this._onPressed,
         onTapUp: this._onPressed,
         onTapCancel: this._onPressed,
-        onTap: () => _changeCellState(context, CellState.uncovered),
-        onLongPress: () => _changeCellState(context, CellState.flagged),
+        onTap: isMarked ? null : () => game.uncover(widget.cellIndex),
+        onLongPress: () => game.toggleMark(widget.cellIndex),
         child: cell,
       );
     } else {
       return cell;
-    }
-  }
-
-  void _changeCellState(BuildContext context, CellState cellState) {
-    var game = Provider.of<GameState>(context, listen: false);
-    if (cellState == CellState.uncovered) {
-      game.uncover(widget.cellIndex);
-    } else {
-      game.mark(widget.cellIndex);
     }
   }
 

@@ -40,7 +40,7 @@ class CellPainter extends CustomPainter {
         }
         break;
 
-      case CellState.flagged:
+      case CellState.marked:
         _drawCovered(canvas, size);
         _drawFlag(canvas, size);
         break;

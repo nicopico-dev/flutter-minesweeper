@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'cell_data.dart';
 import 'game_state.dart';
 import 'minefield.dart';
 
@@ -34,6 +33,8 @@ class GameScreen extends StatelessWidget {
               new RestartButton(),
               SizedBox(height: 16),
               Minefield(width: width, height: height),
+              SizedBox(height: 16),
+              GameStatusText()
             ],
           ),
         ),
@@ -53,5 +54,24 @@ class RestartButton extends StatelessWidget {
       child: Text("Restart"),
       onPressed: () => Provider.of<GameState>(context, listen: false).restart(),
     );
+  }
+}
+
+class GameStatusText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<GameState>(builder: (context, game, child) {
+      switch (game.status) {
+        case GameStatus.Play:
+          return Text("");
+          break;
+        case GameStatus.Win:
+          return Text("You win !!!");
+          break;
+        case GameStatus.Lose:
+          return Text("You lose...");
+          break;
+      }
+    });
   }
 }

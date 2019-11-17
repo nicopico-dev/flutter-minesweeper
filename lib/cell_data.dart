@@ -21,4 +21,4 @@ class CellData {
   }
 }
 
-enum CellState { covered, uncovered, flagged }
+enum CellState { covered, uncovered, marked }

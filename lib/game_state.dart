@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 
 import 'cell_data.dart';
 
+enum GameStatus { Play, Win, Lose }
+
 class GameState extends ChangeNotifier {
   final int width;
   final int height;
@@ -14,26 +16,42 @@ class GameState extends ChangeNotifier {
   UnmodifiableListView<CellData> get cellsData =>
       UnmodifiableListView(_cellsData);
 
+  GameStatus _status;
+  GameStatus get status => _status;
+
   GameState({
     @required this.width,
     @required this.height,
     this.bombPercent = 0.15,
-  }) : _cellsData = _initializeCellsData(width, height, bombPercent);
+  })  : _cellsData = _initializeCellsData(width, height, bombPercent),
+        _status = GameStatus.Play;
 
   void restart() {
     _cellsData = _initializeCellsData(this.width, this.height, bombPercent);
+    _status = GameStatus.Play;
     notifyListeners();
   }
 
   void uncover(int cellIndex) {
     var cell = _cellsData[cellIndex];
     _cellsData[cellIndex] = cell.withState(CellState.uncovered);
+
+    if (cell.bomb) {
+      _status = GameStatus.Lose;
+    } else if (_cellsData.every((c) => c.state == CellState.uncovered)) {
+      _status = GameStatus.Win;
+    } else {
+      // TODO Uncover neighbors
+    }
+
     notifyListeners();
   }
 
-  void mark(int cellIndex) {
+  void toggleMark(int cellIndex) {
     var cell = _cellsData[cellIndex];
-    _cellsData[cellIndex] = cell.withState(CellState.flagged);
+    var newState =
+        cell.state == CellState.covered ? CellState.marked : CellState.covered;
+    _cellsData[cellIndex] = cell.withState(newState);
     notifyListeners();
   }
 }
