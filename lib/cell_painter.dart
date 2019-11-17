@@ -11,12 +11,11 @@ const double LABEL_SIZE = 18;
 
 class CellPainter extends CustomPainter {
   final CellData cellData;
-  final int neighborBombs;
   final bool pressed;
 
   final Color bgPaint = const Color(0xFFBDBDBD);
 
-  const CellPainter(this.cellData, this.neighborBombs, this.pressed);
+  const CellPainter(this.cellData, this.pressed);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -33,8 +32,11 @@ class CellPainter extends CustomPainter {
         _drawUncovered(canvas, size);
         if (cellData.bomb) {
           _drawBomb(canvas, size);
-        } else if (neighborBombs > 0) {
-          _drawNeighborBombs(canvas, size);
+        } else {
+          int neighborBombs = cellData.neighborBombs;
+          if (neighborBombs > 0) {
+            _drawNeighborBombs(canvas, size, neighborBombs);
+          }
         }
         break;
 
@@ -120,9 +122,8 @@ class CellPainter extends CustomPainter {
     Colors.red
   ];
 
-  void _drawNeighborBombs(Canvas canvas, Size size) {
-    final bombTextColorIndex =
-        min(this.neighborBombs, BOMBS_TEXT_COLORS.length) - 1;
+  void _drawNeighborBombs(Canvas canvas, Size size, int neighborBombs) {
+    final bombTextColorIndex = min(neighborBombs, BOMBS_TEXT_COLORS.length) - 1;
     final textPainter = (String text) => TextPainter(
           text: TextSpan(
             text: text,
@@ -135,7 +136,7 @@ class CellPainter extends CustomPainter {
           textAlign: TextAlign.center,
           textDirection: TextDirection.ltr,
         );
-    textPainter(this.neighborBombs.toString())
+    textPainter(neighborBombs.toString())
       ..layout(minWidth: size.width, maxWidth: size.width)
       ..paint(
         canvas,

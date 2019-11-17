@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'cell_data.dart';
+import 'game_state.dart';
 import 'minefield.dart';
 
 void main() => runApp(MyApp());
@@ -16,53 +18,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class GameScreen extends StatefulWidget {
-  @override
-  _GameScreenState createState() => _GameScreenState();
-}
-
-class _GameScreenState extends State<GameScreen> {
-  final int _width = 10;
-  final int _height = 10;
-  final double _bombPercent = 0.15;
-  List<CellData> _cellsData;
-
-  @override
-  void initState() {
-    super.initState();
-    this._initialize();
-  }
-
-  void _initialize() {
-    this._cellsData = plantBombs(_width * _height, _bombPercent);
-  }
-
+class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final int width = 10;
+    final int height = 10;
+
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(
-              child: Text("Restart"),
-              onPressed: this.restart,
-            ),
-            SizedBox(height: 16),
-            Minefield(
-              width: _width,
-              height: _height,
-              cellsData: _cellsData,
-            ),
-          ],
+        child: ChangeNotifierProvider(
+          builder: (context) => GameState(width: width, height: height),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new RestartButton(),
+              SizedBox(height: 16),
+              Minefield(width: width, height: height),
+            ],
+          ),
         ),
       ),
     );
   }
+}
 
-  void restart() {
-    setState(() {
-      this._initialize();
-    });
+class RestartButton extends StatelessWidget {
+  const RestartButton({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      child: Text("Restart"),
+      onPressed: () => Provider.of<GameState>(context, listen: false).restart(),
+    );
   }
 }

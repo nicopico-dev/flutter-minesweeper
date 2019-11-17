@@ -1,53 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:minesweeper/cell_data.dart';
+import 'package:provider/provider.dart';
 
 import 'cell_painter.dart';
+import 'game_state.dart';
 
 class Minefield extends StatelessWidget {
   final int width;
   final int height;
-  final List<CellData> cellsData;
 
-  const Minefield({
-    @required this.width,
-    @required this.height,
-    @required this.cellsData,
-  });
+  const Minefield({@required this.width, @required this.height});
 
   @override
   Widget build(BuildContext context) {
-    final rows = <TableRow>[];
-    for (int row = 0; row < height; row++) {
-      final cells = <Widget>[];
-      for (int col = 0; col < width; col++) {
-        int cellIndex = row * 10 + col;
-        // TODO Defer neighborBomb computation until needed
-        int neighborBombs = countNeighborBombs(
-          this.width,
-          this.cellsData,
-          cellIndex,
-        );
-        cells.add(
-          TableCell(
-            child: MineCell(this.cellsData[cellIndex], neighborBombs),
-          ),
-        );
+    return Consumer<GameState>(builder: (context, game, child) {
+      final rows = <TableRow>[];
+      for (int row = 0; row < height; row++) {
+        final cells = <Widget>[];
+        for (int col = 0; col < width; col++) {
+          int cellIndex = row * 10 + col;
+          final cellData = game.cellsData[cellIndex];
+          cells.add(
+            TableCell(
+              child: MineCell(cellIndex, cellData),
+            ),
+          );
+        }
+        rows.add(TableRow(children: cells));
       }
-      rows.add(TableRow(children: cells));
-    }
-    return Table(
-      border: TableBorder.all(color: Color(0xFFADADAD)),
-      defaultColumnWidth: FixedColumnWidth(CELL_SIZE),
-      children: rows,
-    );
+      return Table(
+        border: TableBorder.all(color: Color(0xFFADADAD)),
+        defaultColumnWidth: FixedColumnWidth(CELL_SIZE),
+        children: rows,
+      );
+    });
   }
 }
 
 class MineCell extends StatefulWidget {
+  final int cellIndex;
   final CellData cellData;
-  final int neighborBombs;
 
-  const MineCell(this.cellData, this.neighborBombs);
+  const MineCell(this.cellIndex, this.cellData);
 
   @override
   _MineCellState createState() => _MineCellState();
@@ -58,21 +52,32 @@ class _MineCellState extends State<MineCell> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO Use standard widgets for text and bitmaps
+    final cellData = widget.cellData;
     var cell = CustomPaint(
       size: Size.square(CELL_SIZE),
-      painter: CellPainter(widget.cellData, widget.neighborBombs, pressed),
+      painter: CellPainter(cellData, pressed),
     );
 
-    if (widget.cellData.state == CellState.covered) {
+    if (cellData.state == CellState.covered) {
       return GestureDetector(
         onTapDown: this._onPressed,
         onTapUp: this._onPressed,
         onTapCancel: this._onPressed,
+        onTap: () => _changeCellState(context, CellState.uncovered),
+        onLongPress: () => _changeCellState(context, CellState.flagged),
         child: cell,
       );
     } else {
       return cell;
+    }
+  }
+
+  void _changeCellState(BuildContext context, CellState cellState) {
+    var game = Provider.of<GameState>(context, listen: false);
+    if (cellState == CellState.uncovered) {
+      game.uncover(widget.cellIndex);
+    } else {
+      game.mark(widget.cellIndex);
     }
   }
 
