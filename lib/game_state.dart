@@ -38,7 +38,7 @@ class GameState extends ChangeNotifier {
 
     if (cell.bomb) {
       _status = GameStatus.Lose;
-    } else if (_cellsData.every((c) => c.state == CellState.uncovered)) {
+    } else if (_checkVictory()) {
       _status = GameStatus.Win;
     } else {
       // TODO Uncover neighbors
@@ -46,6 +46,10 @@ class GameState extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  bool _checkVictory() => _cellsData.every(
+        (c) => c.state == CellState.uncovered || c.bomb,
+      );
 
   void toggleMark(int cellIndex) {
     var cell = _cellsData[cellIndex];
