@@ -40,8 +40,8 @@ class GameState extends ChangeNotifier {
       _status = GameStatus.Lose;
     } else if (_checkVictory()) {
       _status = GameStatus.Win;
-    } else {
-      // TODO Uncover neighbors
+    } else if (cell.neighborBombs == 0) {
+      _uncoverNeighbors(cellIndex);
     }
 
     notifyListeners();
@@ -50,6 +50,18 @@ class GameState extends ChangeNotifier {
   bool _checkVictory() => _cellsData.every(
         (c) => c.state == CellState.uncovered || c.bomb,
       );
+
+  void _uncoverNeighbors(int cellIndex) {
+    for (int i in _getNeighborIndexes(cellIndex, this.width, this.cellsData)) {
+      final cell = _cellsData[i];
+      if (cell.bomb == false && cell.state != CellState.uncovered) {
+        _cellsData[i] = cell.withState(CellState.uncovered);
+        if (cell.neighborBombs == 0) {
+          _uncoverNeighbors(i);
+        }
+      }
+    }
+  }
 
   void toggleMark(int cellIndex) {
     var cell = _cellsData[cellIndex];
@@ -64,12 +76,12 @@ _initializeCellsData(int width, int height, double bombPercent) {
   List<CellData> cells = _plantBombs(width * height, bombPercent);
   return cells
       .asMap()
-      .map((index, v) => MapEntry(
-          index,
+      .map((cellIndex, v) => MapEntry(
+          cellIndex,
           CellData(
             state: v.state,
             bomb: v.bomb,
-            neighborBombs: _countNeighborBombs(width, cells, index),
+            neighborBombs: _countNeighborBombs(cellIndex, width, cells),
           )))
       .values
       .toList();
@@ -96,7 +108,16 @@ List<CellData> _plantBombs(int length, double bombPercent) {
 }
 
 int _countNeighborBombs(
-    int fieldWidth, List<CellData> cellsData, int cellIndex) {
+        int cellIndex, int fieldWidth, List<CellData> cellsData) =>
+    _getNeighborIndexes(cellIndex, fieldWidth, cellsData)
+        .where((i) => cellsData[i].bomb)
+        .length;
+
+List<int> _getNeighborIndexes(
+  int cellIndex,
+  int fieldWidth,
+  List<CellData> cellsData,
+) {
   final int row = (cellIndex / 10).floor();
   final int col = cellIndex - (row * 10);
 
@@ -117,5 +138,5 @@ int _countNeighborBombs(
     if (col < rightMost) neighborIndexes.add(cellIndex + 11); // bottom-right
   }
 
-  return neighborIndexes.where((i) => cellsData[i].bomb).length;
+  return neighborIndexes;
 }
