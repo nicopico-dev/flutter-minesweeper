@@ -28,10 +28,13 @@ class Minefield extends StatelessWidget {
         }
         rows.add(TableRow(children: cells));
       }
-      return Table(
-        border: TableBorder.all(color: Color(0xFFADADAD)),
-        defaultColumnWidth: FixedColumnWidth(CELL_SIZE),
-        children: rows,
+      return Container(
+        color: Color(0xFFBDBDBD),
+        child: Table(
+          border: TableBorder.all(color: Color(0xFFADADAD)),
+          defaultColumnWidth: FixedColumnWidth(CELL_SIZE),
+          children: rows,
+        ),
       );
     });
   }
@@ -71,6 +74,11 @@ class _MineCellState extends State<MineCell> {
         onTapCancel: this._onPressed,
         onTap: isMarked ? null : () => game.uncover(widget.cellIndex),
         onLongPress: () => game.toggleMark(widget.cellIndex),
+        child: cell,
+      );
+    } else if (game.status == GameStatus.Lose && !isCovered && cellData.bomb) {
+      return Container(
+        color: Colors.red,
         child: cell,
       );
     } else {

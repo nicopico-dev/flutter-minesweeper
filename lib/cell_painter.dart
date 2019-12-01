@@ -88,10 +88,7 @@ class CellPainter extends CustomPainter {
   }
 
   void _drawUncovered(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = const Color(0xFFBDBDBD)
-      ..style = PaintingStyle.fill;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    // Nothing to do
   }
 
   void _drawFlag(Canvas canvas, Size size) {
