@@ -62,14 +62,15 @@ class GameStatusText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<GameState>(builder: (context, game, child) {
       switch (game.status) {
-        case GameStatus.Play:
-          return Text("");
-          break;
         case GameStatus.Win:
           return Text("You win !!!");
           break;
         case GameStatus.Lose:
           return Text("You lose...");
+          break;
+        case GameStatus.Play:
+        default:
+          return Text("");
           break;
       }
     });

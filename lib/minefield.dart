@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'cell_data.dart';
-import 'cell_painter.dart';
+import 'cell_content.dart';
 import 'game_state.dart';
+
+const double CELL_SIZE = 30;
 
 class Minefield extends StatelessWidget {
   final int width;
   final int height;
 
-  const Minefield({@required this.width, @required this.height});
+  const Minefield({Key key, @required this.width, @required this.height})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,10 @@ class Minefield extends StatelessWidget {
           final cellData = game.cellsData[cellIndex];
           cells.add(
             TableCell(
-              child: MineCell(cellIndex, cellData),
+              child: MineCell(
+                index: cellIndex,
+                data: cellData,
+              ),
             ),
           );
         }
@@ -41,10 +47,11 @@ class Minefield extends StatelessWidget {
 }
 
 class MineCell extends StatefulWidget {
-  final int cellIndex;
-  final CellData cellData;
+  final int index;
+  final CellData data;
 
-  const MineCell(this.cellIndex, this.cellData);
+  const MineCell({Key key, @required this.index, @required this.data})
+      : super(key: key);
 
   @override
   _MineCellState createState() => _MineCellState();
@@ -55,30 +62,30 @@ class _MineCellState extends State<MineCell> {
 
   @override
   Widget build(BuildContext context) {
-    final cellData = widget.cellData;
-    var cell = CustomPaint(
-      size: Size.square(CELL_SIZE),
-      painter: CellPainter(cellData, pressed),
-    );
-
     GameState game = Provider.of<GameState>(context, listen: false);
+    CellData cellData = widget.data;
+
     bool isCovered = cellData.state == CellState.covered;
     bool isMarked = cellData.state == CellState.marked;
-
     bool canPlay = (isCovered || isMarked) && game.status == GameStatus.Play;
+
+    var cell = Container(
+      width: CELL_SIZE,
+      height: CELL_SIZE,
+      child: CellContent(
+        cellData: cellData,
+        gameStatus: game.status,
+        pressed: pressed,
+      ),
+    );
 
     if (canPlay) {
       return GestureDetector(
         onTapDown: this._onPressed,
         onTapUp: this._onPressed,
         onTapCancel: this._onPressed,
-        onTap: isMarked ? null : () => game.uncover(widget.cellIndex),
-        onLongPress: () => game.toggleMark(widget.cellIndex),
-        child: cell,
-      );
-    } else if (game.status == GameStatus.Lose && !isCovered && cellData.bomb) {
-      return Container(
-        color: Colors.red,
+        onTap: isMarked ? null : () => game.uncover(widget.index),
+        onLongPress: () => game.toggleMark(widget.index),
         child: cell,
       );
     } else {
