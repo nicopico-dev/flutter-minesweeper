@@ -14,4 +14,11 @@ jobs:
         channel: 'stable' 
     - run: flutter pub get
     - run: flutter test
-    - run: flutter build apk --debug --split-per-abi
+    - run: flutter build apk --release
+    - name: Publish on App Center
+      uses: wzieba/AppCenter-Github-Action@v1.0.0
+      with:
+        appName: nicopico.dev/Flutter-Minesweeper
+        token: ${{secrets.APP_CENTER_TOKEN}}
+        group: Collaborators
+        file: build/app/outputs/apk/release/app-release.apk
