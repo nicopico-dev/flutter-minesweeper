@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:minesweeper/smiley_face.dart';
 import 'package:provider/provider.dart';
 
 import 'game_state.dart';
@@ -44,14 +45,12 @@ class GameScreen extends StatelessWidget {
 }
 
 class RestartButton extends StatelessWidget {
-  const RestartButton({
-    Key key,
-  }) : super(key: key);
+  const RestartButton({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      child: Text("Restart"),
+      child: SmileyFace(),
       onPressed: () => Provider.of<GameState>(context, listen: false).restart(),
     );
   }
