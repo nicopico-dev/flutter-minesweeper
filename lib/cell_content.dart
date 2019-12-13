@@ -54,14 +54,14 @@ class CellContent extends StatelessWidget {
 
       case CellState.marked:
         return Stack(
-          alignment: Alignment.center,
           fit: StackFit.expand,
           children: <Widget>[
             CoveredCell(),
-            Container(
+            Padding(
+              padding: const EdgeInsets.all(4),
               child: Image.asset("assets/images/flag.png"),
-              padding: EdgeInsets.all(4),
-            )
+            ),
+            if (!cellData.bomb && gameStatus == GameStatus.Lose) Wrong(),
           ],
         );
         break;
@@ -146,6 +146,34 @@ class _CoveredCellPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_CoveredCellPainter oldDelegate) {
+    return false;
+  }
+}
+
+class Wrong extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: CustomPaint(painter: _WrongPainter()),
+    );
+  }
+}
+
+class _WrongPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    final origin = Offset.zero;
+    canvas.drawLine(origin, size.bottomRight(origin), paint);
+    canvas.drawLine(size.bottomLeft(origin), size.topRight(origin), paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
     return false;
   }
 }
