@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:minesweeper/smiley_face.dart';
 
 import 'cell_data.dart';
 
@@ -19,6 +20,9 @@ class GameState extends ChangeNotifier {
   GameStatus _status;
   GameStatus get status => _status;
 
+  SmileyState _smiley = SmileyState.Chilling;
+  SmileyState get smiley => _smiley;
+
   GameState({
     @required this.width,
     @required this.height,
@@ -29,6 +33,7 @@ class GameState extends ChangeNotifier {
   void restart() {
     _cellsData = _initializeCellsData(this.width, this.height, bombPercent);
     _status = GameStatus.Play;
+    _smiley = SmileyState.Chilling;
     notifyListeners();
   }
 
@@ -44,6 +49,7 @@ class GameState extends ChangeNotifier {
       _uncoverNeighbors(cellIndex);
     }
 
+    _stress();
     notifyListeners();
   }
 
@@ -68,6 +74,26 @@ class GameState extends ChangeNotifier {
     var newState =
         cell.state == CellState.covered ? CellState.marked : CellState.covered;
     _cellsData[cellIndex] = cell.withState(newState);
+    notifyListeners();
+  }
+
+  void _stress() {
+    _smiley = SmileyState.Stressed;
+    Future.delayed(Duration(milliseconds: 100)).whenComplete(_updateSmiley);
+  }
+
+  void _updateSmiley() {
+    switch (status) {
+      case GameStatus.Win:
+        _smiley = SmileyState.Victorious;
+        break;
+      case GameStatus.Lose:
+        _smiley = SmileyState.Dead;
+        break;
+      case GameStatus.Play:
+      default:
+        _smiley = SmileyState.Chilling;
+    }
     notifyListeners();
   }
 }
