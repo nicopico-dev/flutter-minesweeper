@@ -31,7 +31,7 @@ class GameScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              new RestartButton(),
+              SmileyButton(),
               SizedBox(height: 16),
               Minefield(width: width, height: height),
               SizedBox(height: 16),
@@ -44,15 +44,17 @@ class GameScreen extends StatelessWidget {
   }
 }
 
-class RestartButton extends StatelessWidget {
-  const RestartButton({Key key}) : super(key: key);
+class SmileyButton extends StatelessWidget {
+  const SmileyButton({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      child: SmileyFace(),
-      onPressed: () => Provider.of<GameState>(context, listen: false).restart(),
-    );
+    return Consumer<GameState>(builder: (context, game, child) {
+      return RaisedButton(
+        child: SmileyFace(state: game.smiley),
+        onPressed: game.restart,
+      );
+    });
   }
 }
 
