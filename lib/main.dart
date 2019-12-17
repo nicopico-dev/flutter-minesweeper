@@ -67,7 +67,7 @@ class GameStatusText extends StatelessWidget {
           return Text("You win !!!");
           break;
         case GameStatus.Lose:
-          return Text("You lose...");
+          return Text("BOOM! You lose...");
           break;
         case GameStatus.Play:
         default:
