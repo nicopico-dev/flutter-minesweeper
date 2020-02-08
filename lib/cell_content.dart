@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:minesweeper/game_state.dart';
 
+import 'bezel.dart';
 import 'cell_data.dart';
 
 const double CELL_SIZE = 30;
@@ -74,7 +75,7 @@ class CellContent extends StatelessWidget {
 class CoveredCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: _CoveredCellPainter());
+    return Bezel();
   }
 }
 
@@ -102,51 +103,6 @@ class NeighborCount extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
     );
-  }
-}
-
-class _CoveredCellPainter extends CustomPainter {
-  const _CoveredCellPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Background
-    var paint = Paint()
-      ..color = const Color(0xFFBDBBBE)
-      ..style = PaintingStyle.fill;
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-
-    // Top-left
-    paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = BEZEL_SIZE;
-
-    var path = Path();
-    path.moveTo(size.width, 0);
-    path.relativeLineTo(-BEZEL_SIZE, BEZEL_SIZE);
-    path.relativeLineTo(-size.width + 2 * BEZEL_SIZE, 0);
-    path.relativeLineTo(0, size.height - 2 * BEZEL_SIZE);
-    canvas.drawPath(path, paint);
-
-    // Bottom-right
-    paint = Paint()
-      ..color = const Color(0xFF7D797C)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = BEZEL_SIZE;
-
-    path.reset();
-    path.moveTo(size.width, 0);
-    path.relativeLineTo(-BEZEL_SIZE, BEZEL_SIZE);
-    path.relativeLineTo(0, size.height - 2 * BEZEL_SIZE);
-    path.relativeLineTo(-size.width + 2 * BEZEL_SIZE, 0);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_CoveredCellPainter oldDelegate) {
-    return false;
   }
 }
 
