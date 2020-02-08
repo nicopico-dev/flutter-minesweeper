@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'color_transform.dart';
+
 enum BezelLightPosition { NorthWest, SouthEast }
 
 class Bezel extends StatelessWidget {
@@ -10,7 +12,7 @@ class Bezel extends StatelessWidget {
 
   Bezel({
     Key key,
-    this.bezelSize = 2,
+    this.bezelSize = 3,
     Color bezelBaseColor = const Color(0xFFBDBBBE),
     BezelLightPosition bezelLightPosition = BezelLightPosition.NorthWest,
     this.child,
@@ -45,35 +47,65 @@ class _BezelPainter extends CustomPainter {
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
 
+    Color lightColor = baseColor.lighten(0.3);
+    Color darkColor = baseColor.darken(0.3);
+    Color topColor =
+        lightPosition == BezelLightPosition.NorthWest ? lightColor : darkColor;
+    Color bottomColor =
+        lightPosition == BezelLightPosition.NorthWest ? darkColor : lightColor;
+
     // Top-left
     paint = Paint()
-      ..color = Colors.white
+      ..color = topColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = bezelSize;
 
+    final halfBezelSize = bezelSize / 2;
+
     var path = Path();
-    path.moveTo(size.width, 0);
-    path.relativeLineTo(-bezelSize, bezelSize);
-    path.relativeLineTo(-size.width + 2 * bezelSize, 0);
-    path.relativeLineTo(0, size.height - 2 * bezelSize);
+    path.moveTo(size.width, halfBezelSize);
+    path.relativeLineTo(-size.width + halfBezelSize, 0);
+    path.relativeLineTo(0, size.height - halfBezelSize);
     canvas.drawPath(path, paint);
 
     // Bottom-right
     paint = Paint()
-      ..color = const Color(0xFF7D797C)
+      ..color = bottomColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = bezelSize;
 
     path.reset();
-    path.moveTo(size.width, 0);
-    path.relativeLineTo(-bezelSize, bezelSize);
-    path.relativeLineTo(0, size.height - 2 * bezelSize);
-    path.relativeLineTo(-size.width + 2 * bezelSize, 0);
+    path.moveTo(size.width - halfBezelSize, bezelSize);
+    path.relativeLineTo(0, size.height - 1.5 * bezelSize);
+    path.relativeLineTo(-size.width + 1.5 * bezelSize, 0);
+    canvas.drawPath(path, paint);
+
+    // Corners
+    paint = Paint()
+      ..color = bottomColor
+      ..style = PaintingStyle.fill;
+
+    // Bottom-right corner
+    path.reset();
+    path.moveTo(0, size.height);
+    path.relativeLineTo(bezelSize, 0);
+    path.relativeLineTo(0, -bezelSize);
+    path.close();
+    canvas.drawPath(path, paint);
+
+    // Top-left corner
+    path.reset();
+    path.moveTo(size.width - bezelSize, bezelSize);
+    path.relativeLineTo(bezelSize, 0);
+    path.relativeLineTo(0, -bezelSize);
+    path.close();
     canvas.drawPath(path, paint);
   }
 
   @override
   bool shouldRepaint(_BezelPainter oldDelegate) {
-    return false;
+    return oldDelegate.bezelSize != bezelSize ||
+        oldDelegate.lightPosition != lightPosition ||
+        oldDelegate.baseColor != baseColor;
   }
 }
