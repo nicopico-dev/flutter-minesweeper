@@ -3,6 +3,9 @@ import 'package:flutter/widgets.dart';
 
 import 'color_transform.dart';
 
+const Color BEZEL_DEFAULT_COLOR = const Color(0xFFBDBBBE);
+const double BEZEL_DEFAULT_SIZE = 3;
+
 enum BezelLightPosition { NorthWest, SouthEast }
 
 class Bezel extends StatelessWidget {
@@ -12,8 +15,8 @@ class Bezel extends StatelessWidget {
 
   Bezel({
     Key key,
-    this.bezelSize = 3,
-    Color bezelBaseColor = const Color(0xFFBDBBBE),
+    this.bezelSize = BEZEL_DEFAULT_SIZE,
+    Color bezelBaseColor = BEZEL_DEFAULT_COLOR,
     BezelLightPosition bezelLightPosition = BezelLightPosition.NorthWest,
     this.child,
   })  : _painter = _BezelPainter(bezelSize, bezelBaseColor, bezelLightPosition),

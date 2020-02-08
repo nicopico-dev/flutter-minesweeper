@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:minesweeper/bezel_button.dart';
 import 'package:minesweeper/smiley_face.dart';
 import 'package:provider/provider.dart';
 
@@ -50,8 +51,11 @@ class SmileyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<GameState>(builder: (context, game, child) {
-      return RaisedButton(
-        child: SmileyFace(state: game.smiley),
+      return BezelButton(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SmileyFace(state: game.smiley),
+        ),
         onPressed: game.restart,
       );
     });
