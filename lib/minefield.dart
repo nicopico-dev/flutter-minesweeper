@@ -46,7 +46,7 @@ class Minefield extends StatelessWidget {
   }
 }
 
-class MineCell extends StatefulWidget {
+class MineCell extends StatelessWidget {
   final int index;
   final CellData data;
 
@@ -54,48 +54,23 @@ class MineCell extends StatefulWidget {
       : super(key: key);
 
   @override
-  _MineCellState createState() => _MineCellState();
-}
-
-class _MineCellState extends State<MineCell> {
-  bool pressed = false;
-
-  @override
   Widget build(BuildContext context) {
     GameState game = Provider.of<GameState>(context, listen: false);
-    CellData cellData = widget.data;
+    CellData cellData = data;
 
     bool isCovered = cellData.state == CellState.covered;
     bool isMarked = cellData.state == CellState.marked;
     bool canPlay = (isCovered || isMarked) && game.status == GameStatus.Play;
 
-    var cell = Container(
+    return Container(
       width: CELL_SIZE,
       height: CELL_SIZE,
       child: CellContent(
         cellData: cellData,
         gameStatus: game.status,
-        pressed: pressed,
+        onTap: canPlay && !isMarked ? () => game.uncover(index) : null,
+        onLongPress: canPlay ? () => game.toggleMark(index) : null,
       ),
     );
-
-    if (canPlay) {
-      return GestureDetector(
-        onTapDown: this._onPressed,
-        onTapUp: this._onPressed,
-        onTapCancel: this._onPressed,
-        onTap: isMarked ? null : () => game.uncover(widget.index),
-        onLongPress: () => game.toggleMark(widget.index),
-        child: cell,
-      );
-    } else {
-      return cell;
-    }
-  }
-
-  void _onPressed([details]) {
-    setState(() {
-      this.pressed = details is TapDownDetails;
-    });
   }
 }

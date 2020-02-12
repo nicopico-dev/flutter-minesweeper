@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:minesweeper/bezel_button.dart';
 import 'package:minesweeper/game_state.dart';
 
-import 'bezel.dart';
 import 'cell_data.dart';
 
 const double CELL_SIZE = 30;
@@ -14,22 +14,25 @@ const double LABEL_SIZE = 18;
 class CellContent extends StatelessWidget {
   final CellData cellData;
   final GameStatus gameStatus;
-  final bool pressed;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   CellContent({
     Key key,
     @required this.cellData,
     this.gameStatus = GameStatus.Play,
-    this.pressed = false,
+    this.onTap,
+    this.onLongPress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     switch (cellData.state) {
       case CellState.covered:
-        if (!pressed) {
-          return CoveredCell();
-        }
+        return GestureDetector(
+          onLongPress: this.onLongPress,
+          child: BezelButton(onPressed: this.onTap),
+        );
         break;
 
       case CellState.uncovered:
@@ -57,7 +60,7 @@ class CellContent extends StatelessWidget {
         return Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            CoveredCell(),
+            BezelButton(onPressed: null),
             Padding(
               padding: const EdgeInsets.all(4),
               child: Image.asset("assets/images/flag.png"),
@@ -69,13 +72,6 @@ class CellContent extends StatelessWidget {
     }
 
     return Container();
-  }
-}
-
-class CoveredCell extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Bezel();
   }
 }
 
