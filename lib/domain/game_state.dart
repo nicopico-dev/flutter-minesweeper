@@ -23,6 +23,16 @@ class GameState extends ChangeNotifier {
   SmileyState _smiley = SmileyState.Chilling;
   SmileyState get smiley => _smiley;
 
+  int get markCounter {
+    int bombs = 0;
+    int marks = 0;
+    for (final cell in _cellsData) {
+      bombs += cell.bomb ? 1 : 0;
+      marks += cell.state == CellState.marked ? 1 : 0;
+    }
+    return bombs - marks;
+  }
+
   GameState({
     @required this.width,
     @required this.height,
