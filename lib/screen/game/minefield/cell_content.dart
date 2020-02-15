@@ -2,10 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:minesweeper/bezel_button.dart';
-import 'package:minesweeper/game_state.dart';
-
-import 'cell_data.dart';
+import 'package:minesweeper/domain/cell_data.dart';
+import 'package:minesweeper/screen/shared/bezel_button.dart';
+import 'package:minesweeper/domain/game_state.dart';
 
 const double CELL_SIZE = 30;
 const double BEZEL_SIZE = 2;

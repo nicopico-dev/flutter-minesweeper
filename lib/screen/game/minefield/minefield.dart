@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:minesweeper/domain/game_state.dart';
 import 'package:provider/provider.dart';
 
-import 'cell_data.dart';
 import 'cell_content.dart';
-import 'game_state.dart';
-
-const double CELL_SIZE = 30;
+import 'mine_cell.dart';
 
 class Minefield extends StatelessWidget {
   final int width;
@@ -43,34 +41,5 @@ class Minefield extends StatelessWidget {
         ),
       );
     });
-  }
-}
-
-class MineCell extends StatelessWidget {
-  final int index;
-  final CellData data;
-
-  const MineCell({Key key, @required this.index, @required this.data})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    GameState game = Provider.of<GameState>(context, listen: false);
-    CellData cellData = data;
-
-    bool isCovered = cellData.state == CellState.covered;
-    bool isMarked = cellData.state == CellState.marked;
-    bool canPlay = (isCovered || isMarked) && game.status == GameStatus.Play;
-
-    return Container(
-      width: CELL_SIZE,
-      height: CELL_SIZE,
-      child: CellContent(
-        cellData: cellData,
-        gameStatus: game.status,
-        onTap: canPlay && !isMarked ? () => game.uncover(index) : null,
-        onLongPress: canPlay ? () => game.toggleMark(index) : null,
-      ),
-    );
   }
 }

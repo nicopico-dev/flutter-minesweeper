@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:minesweeper/domain/game_state.dart';
+import 'package:minesweeper/domain/smiley_state.dart';
+import 'package:minesweeper/screen/shared/bezel_button.dart';
+import 'package:provider/provider.dart';
 
-enum SmileyState { Chilling, Stressed, Victorious, Dead }
+class SmileyButton extends StatelessWidget {
+  const SmileyButton({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<GameState>(builder: (context, game, child) {
+      return BezelButton(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SmileyFace(state: game.smiley),
+        ),
+        onPressed: game.restart,
+      );
+    });
+  }
+}
 
 class SmileyFace extends StatelessWidget {
   final _painter;

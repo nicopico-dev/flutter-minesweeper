@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:minesweeper/smiley_face.dart';
+import 'package:minesweeper/domain/smiley_state.dart';
 
 import 'cell_data.dart';
 
