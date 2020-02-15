@@ -26,51 +26,54 @@ class CellContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (cellData.state) {
-      case CellState.covered:
-        return GestureDetector(
-          onLongPress: this.onLongPress,
-          child: BezelButton(onPressed: this.onTap),
-        );
-        break;
+    return GestureDetector(
+      onLongPress: this.onLongPress,
+      child: Builder(builder: (context) {
+        switch (cellData.state) {
+          case CellState.covered:
+            return BezelButton(onPressed: this.onTap);
+            break;
 
-      case CellState.uncovered:
-        if (cellData.bomb) {
-          return Stack(
-            alignment: Alignment.center,
-            fit: StackFit.expand,
-            children: <Widget>[
-              if (gameStatus == GameStatus.Lose) Container(color: Colors.red),
-              Container(
-                child: Image.asset("assets/images/bomb.png"),
-                padding: EdgeInsets.all(4),
-              )
-            ],
-          );
-        } else {
-          int neighborBombs = cellData.neighborBombs;
-          if (neighborBombs > 0) {
-            return NeighborCount(neighborBombs: neighborBombs);
-          }
+          case CellState.uncovered:
+            if (cellData.bomb) {
+              return Stack(
+                alignment: Alignment.center,
+                fit: StackFit.expand,
+                children: <Widget>[
+                  if (gameStatus == GameStatus.Lose)
+                    Container(color: Colors.red),
+                  Container(
+                    child: Image.asset("assets/images/bomb.png"),
+                    padding: EdgeInsets.all(4),
+                  )
+                ],
+              );
+            } else {
+              int neighborBombs = cellData.neighborBombs;
+              if (neighborBombs > 0) {
+                return NeighborCount(neighborBombs: neighborBombs);
+              }
+            }
+            break;
+
+          case CellState.marked:
+            return Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                BezelButton(onPressed: null),
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Image.asset("assets/images/flag.png"),
+                ),
+                if (!cellData.bomb && gameStatus == GameStatus.Lose) Wrong(),
+              ],
+            );
+            break;
         }
-        break;
 
-      case CellState.marked:
-        return Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            BezelButton(onPressed: null),
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: Image.asset("assets/images/flag.png"),
-            ),
-            if (!cellData.bomb && gameStatus == GameStatus.Lose) Wrong(),
-          ],
-        );
-        break;
-    }
-
-    return Container();
+        return Container();
+      }),
+    );
   }
 }
 
