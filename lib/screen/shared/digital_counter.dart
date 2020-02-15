@@ -1,0 +1,39 @@
+import 'package:flutter/material.dart';
+import 'package:minesweeper/screen/shared/bezel.dart';
+
+class DigitalCounter extends StatelessWidget {
+  final int value;
+
+  const DigitalCounter({Key key, this.value})
+      : assert(value == null || value >= 0 && value < 1000),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final baseStyle = const TextStyle(
+      fontSize: 54,
+      fontFamily: 'Digital7',
+      color: Color(0xFF420616),
+    );
+    final valueStyle = baseStyle.copyWith(color: Color(0xFFB72317));
+
+    return Bezel(
+      bezelLightPosition: BezelLightPosition.SouthEast,
+      bezelSize: 2,
+      child: Container(
+        color: Color(0xFF1A0200),
+        child: Stack(children: [
+          Text(
+            "888",
+            style: baseStyle,
+          ),
+          if (value != null)
+            Text(
+              value.toString().padLeft(3, '0'),
+              style: valueStyle,
+            )
+        ]),
+      ),
+    );
+  }
+}

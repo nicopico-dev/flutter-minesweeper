@@ -5,9 +5,11 @@ import 'package:minesweeper/screen/shared/menu_bar.dart';
 import 'package:minesweeper/screen/shared/toolbar.dart';
 import 'package:provider/provider.dart';
 
+import 'bomb_counter.dart';
 import 'game_status_text.dart';
 import 'minefield/minefield.dart';
 import 'smiley_face.dart';
+import 'time_counter.dart';
 
 class GameScreen extends StatelessWidget {
   @override
@@ -37,9 +39,11 @@ class GameScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(borderSize),
                           child: Row(
                             children: <Widget>[
+                              BombCounter(),
                               Spacer(),
                               SmileyButton(),
                               Spacer(),
+                              TimeCounter(),
                             ],
                           ),
                         ),

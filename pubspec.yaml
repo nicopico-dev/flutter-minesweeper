@@ -71,3 +71,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Digital7
+      fonts:
+        - asset: assets/fonts/digital-7-mono.ttf
