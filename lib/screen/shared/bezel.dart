@@ -22,6 +22,12 @@ class Bezel extends StatelessWidget {
   })  : _painter = _BezelPainter(bezelSize, bezelBaseColor, bezelLightPosition),
         super(key: key);
 
+  Bezel.inverse({Widget child})
+      : this(
+          bezelLightPosition: BezelLightPosition.SouthEast,
+          child: child,
+        );
+
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
