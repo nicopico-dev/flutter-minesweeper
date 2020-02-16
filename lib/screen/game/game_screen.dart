@@ -48,7 +48,7 @@ class GameScreen extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: Minefield(width: width, height: height),
-                        ).withPadding(borderSize),
+                        ),
                       ),
                     ),
                   ],

@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'color_transform.dart';
 
-const Color BEZEL_DEFAULT_COLOR = const Color(0xFFBDBBBE);
+const Color BEZEL_DEFAULT_COLOR = const Color(0xFFD0D1CD);
 const double BEZEL_DEFAULT_SIZE = 3;
 
 enum BezelLightPosition { NorthWest, SouthEast }

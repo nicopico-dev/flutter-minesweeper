@@ -75,3 +75,7 @@ flutter:
     - family: Digital7
       fonts:
         - asset: assets/fonts/digital-7-mono.ttf
+    - family: Verdana
+      fonts:
+        - asset: assets/fonts/Verdana Bold.ttf
+      

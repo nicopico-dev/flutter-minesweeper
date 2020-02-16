@@ -32,13 +32,10 @@ class Minefield extends StatelessWidget {
         }
         rows.add(TableRow(children: cells));
       }
-      return Container(
-        color: Color(0xFFBDBDBD),
-        child: Table(
-          border: TableBorder.all(color: Color(0xFFADADAD)),
-          defaultColumnWidth: FixedColumnWidth(CELL_SIZE),
-          children: rows,
-        ),
+      return Table(
+        border: TableBorder.all(color: Color(0xFFADADAD)),
+        defaultColumnWidth: FixedColumnWidth(CELL_SIZE),
+        children: rows,
       );
     });
   }

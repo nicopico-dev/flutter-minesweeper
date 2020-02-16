@@ -79,9 +79,11 @@ class CellContent extends StatelessWidget {
 
 class NeighborCount extends StatelessWidget {
   static const BOMBS_TEXT_COLORS = <Color>[
-    Colors.blue,
-    Colors.green,
-    Colors.red
+    Color(0xFF1916D0),
+    Color(0xFF75BB77),
+    Color(0xFFB31825),
+    Color(0xFF0B0C8A),
+    Color(0xFF781E53)
   ];
   final int neighborBombs;
 
@@ -96,7 +98,7 @@ class NeighborCount extends StatelessWidget {
         style: TextStyle(
           color: BOMBS_TEXT_COLORS[bombTextColorIndex],
           fontSize: LABEL_SIZE,
-          fontWeight: FontWeight.w700,
+          fontFamily: 'Verdana',
         ),
         textAlign: TextAlign.center,
       ),
