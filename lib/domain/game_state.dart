@@ -57,6 +57,9 @@ class GameState extends ChangeNotifier {
       _status = GameStatus.Win;
     } else if (cell.neighborBombs == 0) {
       _uncoverNeighbors(cellIndex);
+      if (_checkVictory()) {
+        _status = GameStatus.Win;
+      }
     }
 
     _stress();
