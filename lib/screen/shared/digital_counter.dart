@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:minesweeper/screen/shared/bezel.dart';
 
@@ -17,10 +19,18 @@ class DigitalCounter extends StatelessWidget {
     );
     final valueStyle = baseStyle.copyWith(color: Color(0xFFB72317));
 
+    EdgeInsets counterPadding;
+    if (Platform.isAndroid) {
+      counterPadding = EdgeInsets.all(4);
+    } else {
+      counterPadding = EdgeInsets.zero;
+    }
+
     return Bezel(
       bezelLightPosition: BezelLightPosition.SouthEast,
       bezelSize: 2,
       child: Container(
+        padding: counterPadding,
         color: Color(0xFF1A0200),
         child: Stack(children: [
           Text(
