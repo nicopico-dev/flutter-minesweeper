@@ -1,5 +1,5 @@
 name: minesweeper
-description: Minesweeper game with Flutter
+description: A new Flutter project.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -11,7 +11,7 @@ description: Minesweeper game with Flutter
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.1.1+3
+version: 0.1.0+2
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -20,10 +20,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^0.1.2
   provider: ^3.0.0
-  appcenter: ^0.2.1
-  appcenter_crashes: ^0.2.1
-  appcenter_analytics: ^0.2.1
 
 dev_dependencies:
   flutter_test:
@@ -35,6 +35,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
