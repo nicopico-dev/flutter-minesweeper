@@ -7,8 +7,6 @@ import 'package:minesweeper/screen/shared/bezel_button.dart';
 import 'package:minesweeper/domain/game_state.dart';
 
 const double CELL_SIZE = 30;
-const double BEZEL_SIZE = 2;
-const double LABEL_SIZE = 18;
 
 class CellContent extends StatelessWidget {
   final CellData cellData;
@@ -97,7 +95,7 @@ class NeighborCount extends StatelessWidget {
         this.neighborBombs.toString(),
         style: TextStyle(
           color: BOMBS_TEXT_COLORS[bombTextColorIndex],
-          fontSize: LABEL_SIZE,
+          fontSize: 18,
           fontFamily: 'Verdana',
         ),
         textAlign: TextAlign.center,

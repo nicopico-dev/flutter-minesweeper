@@ -13,6 +13,9 @@ class GameState extends ChangeNotifier {
   final int height;
   final double bombPercent;
 
+  final _GameInitializer _initializer;
+  final _CellHelper _cellHelper;
+
   List<CellData> _cellsData = [];
   UnmodifiableListView<CellData> get cellsData =>
       UnmodifiableListView(_cellsData);
@@ -22,6 +25,16 @@ class GameState extends ChangeNotifier {
 
   SmileyState _smiley = SmileyState.Chilling;
   SmileyState get smiley => _smiley;
+
+  GameState({
+    @required this.width,
+    @required this.height,
+    this.bombPercent = 0.15,
+  })  : _initializer = _GameInitializer(width, height, bombPercent),
+        _cellHelper = _CellHelper(width, height),
+        _status = GameStatus.Play {
+    _cellsData = _initializer._initializeCellsData();
+  }
 
   int get markCounter {
     int bombs = 0;
@@ -33,15 +46,8 @@ class GameState extends ChangeNotifier {
     return bombs - marks;
   }
 
-  GameState({
-    @required this.width,
-    @required this.height,
-    this.bombPercent = 0.15,
-  })  : _cellsData = _initializeCellsData(width, height, bombPercent),
-        _status = GameStatus.Play;
-
   void restart() {
-    _cellsData = _initializeCellsData(this.width, this.height, bombPercent);
+    _cellsData = _initializer._initializeCellsData();
     _status = GameStatus.Play;
     _smiley = SmileyState.Chilling;
     notifyListeners();
@@ -66,12 +72,11 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _checkVictory() => _cellsData.every(
-        (c) => c.state == CellState.uncovered || c.bomb,
-      );
+  bool _checkVictory() =>
+      _cellsData.every((c) => c.state == CellState.uncovered || c.bomb);
 
   void _uncoverNeighbors(int cellIndex) {
-    for (int i in _getNeighborIndexes(cellIndex, this.width, this.cellsData)) {
+    for (int i in _cellHelper.getNeighborIndexes(cellIndex)) {
       final cell = _cellsData[i];
       if (cell.bomb == false && cell.state != CellState.uncovered) {
         _cellsData[i] = cell.withState(CellState.uncovered);
@@ -111,71 +116,96 @@ class GameState extends ChangeNotifier {
   }
 }
 
-_initializeCellsData(int width, int height, double bombPercent) {
-  List<CellData> cells = _plantBombs(width * height, bombPercent);
-  return cells
-      .asMap()
-      .map((cellIndex, v) => MapEntry(
-          cellIndex,
-          CellData(
-            state: v.state,
-            bomb: v.bomb,
-            neighborBombs: _countNeighborBombs(cellIndex, width, cells),
-          )))
-      .values
-      .toList();
+class _GameInitializer {
+  final int width;
+  final int height;
+  final double bombPercent;
+
+  final _CellHelper _cellHelper;
+
+  _GameInitializer([this.width, this.height, this.bombPercent])
+      : _cellHelper = _CellHelper(width, height);
+
+  List<CellData> _initializeCellsData() {
+    List<CellData> cells = _plantBombs(width * height, bombPercent);
+    return cells
+        .asMap()
+        .map((cellIndex, v) => MapEntry(
+            cellIndex,
+            CellData(
+              state: v.state,
+              bomb: v.bomb,
+              neighborBombs: _countNeighborBombs(cellIndex, cells),
+            )))
+        .values
+        .toList();
+  }
+
+  static List<CellData> _plantBombs(int length, double bombPercent) {
+    var bombsLeft = length * bombPercent;
+    var cellsLeft = length;
+
+    final cellIndexes = List<int>.generate(length, (i) => i)..shuffle();
+
+    final cells = List<CellData>(length);
+    for (var i in cellIndexes) {
+      double r = Random().nextDouble();
+      double bombProbability = bombsLeft / cellsLeft;
+      bool hasBomb = r <= bombProbability;
+      cells[i] = CellData(bomb: hasBomb);
+
+      cellsLeft -= 1;
+      if (hasBomb) bombsLeft -= 1;
+    }
+
+    return cells;
+  }
+
+  int _countNeighborBombs(int cellIndex, List<CellData> cellsData) =>
+      _cellHelper
+          .getNeighborIndexes(cellIndex)
+          .where((i) => cellsData[i].bomb)
+          .length;
 }
 
-List<CellData> _plantBombs(int length, double bombPercent) {
-  var bombsLeft = length * bombPercent;
-  var cellsLeft = length;
+class _CellHelper {
+  final int width;
+  final int height;
 
-  final cellIndexes = List<int>.generate(length, (i) => i)..shuffle();
+  const _CellHelper([this.width, this.height]);
 
-  final cells = List<CellData>(length);
-  for (var i in cellIndexes) {
-    double r = Random().nextDouble();
-    double bombProbability = bombsLeft / cellsLeft;
-    bool hasBomb = r <= bombProbability;
-    cells[i] = CellData(bomb: hasBomb);
+  List<int> getNeighborIndexes(int cellIndex) {
+    final int row = (cellIndex / width).floor();
+    final int col = cellIndex - (row * width);
 
-    cellsLeft -= 1;
-    if (hasBomb) bombsLeft -= 1;
+    final leftMost = 0;
+    final rightMost = width - 1;
+    final topMost = 0;
+    final bottomMost = height - 1;
+
+    List<int> neighborIndexes = [];
+
+    // Top
+    if (row > topMost) {
+      final top = cellIndex - width;
+      neighborIndexes.add(top); // top-center
+
+      if (col > leftMost) neighborIndexes.add(top - 1); // top-left
+      if (col < rightMost) neighborIndexes.add(top + 1); // top-right
+    }
+
+    if (col > leftMost) neighborIndexes.add(cellIndex - 1); // left
+    if (col < rightMost) neighborIndexes.add(cellIndex + 1); // right
+
+    // Bottom
+    if (row < bottomMost) {
+      final bottom = cellIndex + width;
+      neighborIndexes.add(bottom); // bottom-center
+
+      if (col > leftMost) neighborIndexes.add(bottom - 1); // bottom-left
+      if (col < rightMost) neighborIndexes.add(bottom + 1); // bottom-right
+    }
+
+    return neighborIndexes;
   }
-
-  return cells;
-}
-
-int _countNeighborBombs(
-        int cellIndex, int fieldWidth, List<CellData> cellsData) =>
-    _getNeighborIndexes(cellIndex, fieldWidth, cellsData)
-        .where((i) => cellsData[i].bomb)
-        .length;
-
-List<int> _getNeighborIndexes(
-  int cellIndex,
-  int fieldWidth,
-  List<CellData> cellsData,
-) {
-  final int row = (cellIndex / 10).floor();
-  final int col = cellIndex - (row * 10);
-
-  final rightMost = fieldWidth - 1;
-  final bottomMost = (cellsData.length / fieldWidth) - 1;
-
-  List<int> neighborIndexes = [];
-  if (row > 0) {
-    if (col > 0) neighborIndexes.add(cellIndex - 11); // top-left
-    neighborIndexes.add(cellIndex - 10); // top-center
-    if (col < rightMost) neighborIndexes.add(cellIndex - 9); // top-right
-  }
-  if (col > 0) neighborIndexes.add(cellIndex - 1); // left
-  if (col < rightMost) neighborIndexes.add(cellIndex + 1); // right
-  if (row < bottomMost) {
-    if (col > 0) neighborIndexes.add(cellIndex + 9); // bottom-left
-    neighborIndexes.add(cellIndex + 10); // bottom-center
-    if (col < rightMost) neighborIndexes.add(cellIndex + 11); // bottom-right
-  }
-
-  return neighborIndexes;
 }
