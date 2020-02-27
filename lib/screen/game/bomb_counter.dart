@@ -7,7 +7,7 @@ class BombCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<GameState>(builder: (context, game, child) {
-      return DigitalCounter(value: game.markCounter);
+      return DigitalCounter(value: game.unmarkedBombs);
     });
   }
 }

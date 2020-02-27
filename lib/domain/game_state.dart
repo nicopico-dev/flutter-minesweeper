@@ -26,6 +26,9 @@ class GameState extends ChangeNotifier {
   SmileyState _smiley = SmileyState.Chilling;
   SmileyState get smiley => _smiley;
 
+  int _gameStart;
+  int get gameStart => _gameStart;
+
   GameState({
     @required this.width,
     @required this.height,
@@ -33,10 +36,17 @@ class GameState extends ChangeNotifier {
   })  : _initializer = _GameInitializer(width, height, bombPercent),
         _cellHelper = _CellHelper(width, height),
         _status = GameStatus.Play {
-    _cellsData = _initializer._initializeCellsData();
+    _init();
   }
 
-  int get markCounter {
+  void _init() {
+    _cellsData = _initializer._initializeCellsData();
+    _status = GameStatus.Play;
+    _smiley = SmileyState.Chilling;
+    _gameStart = null;
+  }
+
+  int get unmarkedBombs {
     int bombs = 0;
     int marks = 0;
     for (final cell in _cellsData) {
@@ -47,13 +57,15 @@ class GameState extends ChangeNotifier {
   }
 
   void restart() {
-    _cellsData = _initializer._initializeCellsData();
-    _status = GameStatus.Play;
-    _smiley = SmileyState.Chilling;
+    _init();
     notifyListeners();
   }
 
   void uncover(int cellIndex) {
+    if (_gameStart == null) {
+      _gameStart = DateTime.now().millisecondsSinceEpoch;
+    }
+
     var cell = _cellsData[cellIndex];
     _cellsData[cellIndex] = cell.withState(CellState.uncovered);
 
