@@ -9,32 +9,28 @@ class Toolbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide()),
-          color: Color(0xFF0208A2),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            MenuButton(),
-            Expanded(
-              child: Center(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xFF0208A2),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          MenuButton(),
+          Expanded(
+            child: Center(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            BezelButton(child: Icon(Icons.arrow_drop_down), onPressed: null)
-          ],
-        ),
+          ),
+          BezelButton(child: Icon(Icons.arrow_drop_down), onPressed: null)
+        ],
       ),
     );
   }

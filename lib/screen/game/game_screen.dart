@@ -19,44 +19,52 @@ class GameScreen extends StatelessWidget {
     const double borderSize = 10;
 
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Toolbar(title: "Minesweeper"),
-          MenuBar(),
-          Expanded(
-            child: Bezel(
-              child: ChangeNotifierProvider(
-                builder: (context) => GameState(width: width, height: height),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Bezel.inverse(
-                      child: Row(
-                        children: <Widget>[
-                          BombCounter(),
-                          Spacer(),
-                          SmileyButton(),
-                          Spacer(),
-                          TimeCounter(),
-                        ],
-                      ).withPadding(borderSize),
-                    ),
-                    SizedBox(height: borderSize),
-                    Expanded(
-                      child: Bezel.inverse(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Minefield(width: width, height: height),
-                        ),
-                      ),
-                    ),
-                  ],
-                ).withPadding(borderSize),
-              ),
-            ),
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.fromBorderSide(BorderSide()),
           ),
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Toolbar(title: "Minesweeper"),
+              MenuBar(),
+              Expanded(
+                child: Bezel(
+                  child: ChangeNotifierProvider(
+                    builder: (context) =>
+                        GameState(width: width, height: height),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Bezel.inverse(
+                          child: Row(
+                            children: <Widget>[
+                              BombCounter(),
+                              Spacer(),
+                              SmileyButton(),
+                              Spacer(),
+                              TimeCounter(),
+                            ],
+                          ).withPadding(borderSize),
+                        ),
+                        SizedBox(height: borderSize),
+                        Expanded(
+                          child: Bezel.inverse(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Minefield(width: width, height: height),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ).withPadding(borderSize),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
