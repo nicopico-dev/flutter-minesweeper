@@ -19,10 +19,10 @@ class GameState extends ChangeNotifier {
   int _gameStart;
 
   GameState() {
-    _init();
+    _startGame();
   }
 
-  void _init() {
+  void _startGame() {
     _status = GameStatus.Play;
     _smiley = SmileyState.Chilling;
     _gameStart = null;
@@ -33,6 +33,7 @@ class GameState extends ChangeNotifier {
   set skill(Skill value) {
     _skill = value;
     _difficulty = value.difficulty;
+    _startGame();
     notifyListeners();
   }
 
@@ -40,6 +41,7 @@ class GameState extends ChangeNotifier {
   set difficulty(Difficulty value) {
     _skill = Skill.Custom;
     _difficulty = value;
+    _startGame();
     notifyListeners();
   }
 
@@ -105,7 +107,7 @@ class GameState extends ChangeNotifier {
   }
 
   void restart() {
-    _init();
+    _startGame();
     notifyListeners();
   }
 

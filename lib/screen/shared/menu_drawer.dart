@@ -14,7 +14,11 @@ class MenuDrawer extends StatelessWidget {
     return Drawer(
       child: Consumer<GameState>(
         builder: (context, game, child) {
-          _OnSkillChanged onSkillChanged = (value) => game.skill = value;
+          _OnSkillChanged onSkillChanged = (value) {
+            game.skill = value;
+            // Close drawer
+            Navigator.of(context).pop();
+          };
 
           return ListView(
             padding: EdgeInsets.zero,
