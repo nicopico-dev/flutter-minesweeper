@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:minesweeper/domain/game_state.dart';
 import 'package:minesweeper/screen/shared/bezel.dart';
 import 'package:minesweeper/screen/shared/menu_bar.dart';
+import 'package:minesweeper/screen/shared/menu_drawer.dart';
 import 'package:minesweeper/screen/shared/scrollable_content.dart';
 import 'package:minesweeper/screen/shared/toolbar.dart';
 import 'package:minesweeper/screen/shared/widget_ext.dart';
@@ -19,22 +20,22 @@ class GameScreen extends StatelessWidget {
     final int height = 30;
     const double borderSize = 10;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.fromBorderSide(BorderSide()),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Toolbar(title: "Minesweeper"),
-              MenuBar(),
-              Expanded(
-                child: Bezel(
-                  child: ChangeNotifierProvider(
-                    builder: (context) =>
-                        GameState(width: width, height: height),
+    return ChangeNotifierProvider(
+      builder: (context) => GameState(width: width, height: height),
+      child: Scaffold(
+        drawer: MenuDrawer(),
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.fromBorderSide(BorderSide()),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Toolbar(title: "Minesweeper"),
+                MenuBar(),
+                Expanded(
+                  child: Bezel(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
@@ -61,8 +62,8 @@ class GameScreen extends StatelessWidget {
                     ).withPadding(borderSize),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

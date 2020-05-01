@@ -43,11 +43,14 @@ class Toolbar extends StatelessWidget implements PreferredSizeWidget {
 class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 38,
-      height: 38,
-      color: Constants.BEZEL_DEFAULT_COLOR,
-      child: Icon(Icons.menu),
+    return GestureDetector(
+      onTap: () => Scaffold.of(context, nullOk: true)?.openDrawer(),
+      child: Container(
+        width: 38,
+        height: 38,
+        color: Constants.BEZEL_DEFAULT_COLOR,
+        child: Icon(Icons.menu),
+      ),
     );
   }
 }

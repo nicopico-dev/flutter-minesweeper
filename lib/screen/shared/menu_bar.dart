@@ -22,11 +22,14 @@ class MenuBar extends StatelessWidget {
       padding: EdgeInsets.all(4),
       child: Row(children: <Widget>[
         SizedBox(width: 8),
-        RichText(
-          text: TextSpan(
-            text: 'G',
-            style: textStyleUnderline,
-            children: [TextSpan(text: "ame", style: textStyle)],
+        InkWell(
+          onTap: () => Scaffold.of(context, nullOk: true)?.openDrawer(),
+          child: RichText(
+            text: TextSpan(
+              text: 'G',
+              style: textStyleUnderline,
+              children: [TextSpan(text: "ame", style: textStyle)],
+            ),
           ),
         ),
         SizedBox(width: 16),

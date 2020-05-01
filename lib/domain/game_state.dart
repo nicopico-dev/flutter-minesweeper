@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:minesweeper/domain/smiley_state.dart';
 
 import 'cell_data.dart';
+import 'skill.dart';
 
 enum GameStatus { Play, Win, Lose }
 
@@ -16,11 +17,27 @@ class GameState extends ChangeNotifier {
   final _GameInitializer _initializer;
   final _CellHelper _cellHelper;
 
+  Skill _skill = Skill.Beginner;
+  Skill get skill => _skill;
+  set skill(Skill value) {
+    _skill = value;
+    _difficulty = value.difficulty;
+    notifyListeners();
+  }
+
+  Difficulty _difficulty;
+  Difficulty get difficulty => _difficulty ?? _skill.difficulty;
+  set difficulty(Difficulty value) {
+    _skill = Skill.Custom;
+    _difficulty = value;
+    notifyListeners();
+  }
+
   List<CellData> _cellsData = [];
   UnmodifiableListView<CellData> get cellsData =>
       UnmodifiableListView(_cellsData);
 
-  GameStatus _status;
+  GameStatus _status = GameStatus.Play;
   GameStatus get status => _status;
 
   SmileyState _smiley = SmileyState.Chilling;
@@ -34,8 +51,7 @@ class GameState extends ChangeNotifier {
     @required this.height,
     this.bombPercent = 0.15,
   })  : _initializer = _GameInitializer(width, height, bombPercent),
-        _cellHelper = _CellHelper(width, height),
-        _status = GameStatus.Play {
+        _cellHelper = _CellHelper(width, height) {
     _init();
   }
 
