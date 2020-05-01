@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:minesweeper/screen/shared/bezel.dart';
 import 'package:minesweeper/screen/shared/bezel_button.dart';
+
+import 'constants.dart';
 
 class Toolbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -11,7 +12,7 @@ class Toolbar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF0208A2),
+        color: Constants.WIN_BLUE,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,7 +46,7 @@ class MenuButton extends StatelessWidget {
     return Container(
       width: 38,
       height: 38,
-      color: BEZEL_DEFAULT_COLOR,
+      color: Constants.BEZEL_DEFAULT_COLOR,
       child: Icon(Icons.menu),
     );
   }

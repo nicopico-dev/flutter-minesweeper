@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'bezel.dart';
+import 'constants.dart';
 
 class BezelButton extends StatefulWidget {
   final Widget child;
@@ -38,8 +39,8 @@ class _BezelButtonState extends State<BezelButton> {
               bezelLightPosition: BezelLightPosition.SouthEast);
         else
           return Container(
-            color: BEZEL_DEFAULT_COLOR,
-            padding: EdgeInsets.all(BEZEL_DEFAULT_SIZE),
+            color: Constants.BEZEL_DEFAULT_COLOR,
+            padding: EdgeInsets.all(Constants.BEZEL_DEFAULT_SIZE),
             child: widget.child,
           );
       }),
