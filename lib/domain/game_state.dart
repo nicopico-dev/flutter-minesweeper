@@ -10,14 +10,25 @@ import 'skill.dart';
 enum GameStatus { Play, Win, Lose }
 
 class GameState extends ChangeNotifier {
-  final int width;
-  final int height;
-  final double bombPercent;
-
-  final _GameInitializer _initializer;
-  final _CellHelper _cellHelper;
-
   Skill _skill = Skill.Beginner;
+  Difficulty _difficulty;
+
+  List<CellData> _cellsData;
+  GameStatus _status;
+  SmileyState _smiley;
+  int _gameStart;
+
+  GameState() {
+    _init();
+  }
+
+  void _init() {
+    _status = GameStatus.Play;
+    _smiley = SmileyState.Chilling;
+    _gameStart = null;
+    _cellsData = List.filled(width * height, CellData(bomb: false));
+  }
+
   Skill get skill => _skill;
   set skill(Skill value) {
     _skill = value;
@@ -25,7 +36,6 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Difficulty _difficulty;
   Difficulty get difficulty => _difficulty ?? _skill.difficulty;
   set difficulty(Difficulty value) {
     _skill = Skill.Custom;
@@ -33,53 +43,32 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<CellData> _cellsData = [];
+  int get width => difficulty.width;
+  int get height => difficulty.height;
+
   UnmodifiableListView<CellData> get cellsData =>
       UnmodifiableListView(_cellsData);
 
-  GameStatus _status = GameStatus.Play;
   GameStatus get status => _status;
 
-  SmileyState _smiley = SmileyState.Chilling;
   SmileyState get smiley => _smiley;
 
-  int _gameStart;
-  int get gameStart => _gameStart;
-
-  GameState({
-    @required this.width,
-    @required this.height,
-    this.bombPercent = 0.15,
-  })  : _initializer = _GameInitializer(width, height, bombPercent),
-        _cellHelper = _CellHelper(width, height) {
-    _init();
-  }
-
-  void _init() {
-    _cellsData = _initializer._initializeCellsData();
-    _status = GameStatus.Play;
-    _smiley = SmileyState.Chilling;
-    _gameStart = null;
-  }
+  int get startTime => _gameStart;
 
   int get unmarkedBombs {
-    int bombs = 0;
+    int bombs = difficulty.bombs;
     int marks = 0;
     for (final cell in _cellsData) {
-      bombs += cell.bomb ? 1 : 0;
       marks += cell.state == CellState.marked ? 1 : 0;
     }
     return bombs - marks;
   }
 
-  void restart() {
-    _init();
-    notifyListeners();
-  }
-
   void uncover(int cellIndex) {
     if (_gameStart == null) {
       _gameStart = DateTime.now().millisecondsSinceEpoch;
+      // TODO Make sure there is no bomb in cellIndex
+      _cellsData = _initializeData();
     }
 
     var cell = _cellsData[cellIndex];
@@ -100,11 +89,32 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _checkVictory() =>
-      _cellsData.every((c) => c.state == CellState.uncovered || c.bomb);
+  void toggleMark(int cellIndex) {
+    var cell = _cellsData[cellIndex];
+    var newState =
+        cell.state == CellState.covered ? CellState.marked : CellState.covered;
+
+    if (newState == CellState.marked && unmarkedBombs == 0) {
+      // TODO Blink the bomb counter
+      debugPrint("Too many marks !");
+      return;
+    }
+
+    _cellsData[cellIndex] = cell.withState(newState);
+    notifyListeners();
+  }
+
+  void restart() {
+    _init();
+    notifyListeners();
+  }
+
+  bool _checkVictory() {
+    return _cellsData.every((c) => c.state == CellState.uncovered || c.bomb);
+  }
 
   void _uncoverNeighbors(int cellIndex) {
-    for (int i in _cellHelper.getNeighborIndexes(cellIndex)) {
+    for (int i in _getNeighborIndexes(cellIndex)) {
       final cell = _cellsData[i];
       if (cell.bomb == false && cell.state != CellState.uncovered) {
         _cellsData[i] = cell.withState(CellState.uncovered);
@@ -113,14 +123,6 @@ class GameState extends ChangeNotifier {
         }
       }
     }
-  }
-
-  void toggleMark(int cellIndex) {
-    var cell = _cellsData[cellIndex];
-    var newState =
-        cell.state == CellState.covered ? CellState.marked : CellState.covered;
-    _cellsData[cellIndex] = cell.withState(newState);
-    notifyListeners();
   }
 
   void _stress() {
@@ -142,35 +144,10 @@ class GameState extends ChangeNotifier {
     }
     notifyListeners();
   }
-}
 
-class _GameInitializer {
-  final int width;
-  final int height;
-  final double bombPercent;
-
-  final _CellHelper _cellHelper;
-
-  _GameInitializer([this.width, this.height, this.bombPercent])
-      : _cellHelper = _CellHelper(width, height);
-
-  List<CellData> _initializeCellsData() {
-    List<CellData> cells = _plantBombs(width * height, bombPercent);
-    return cells
-        .asMap()
-        .map((cellIndex, v) => MapEntry(
-            cellIndex,
-            CellData(
-              state: v.state,
-              bomb: v.bomb,
-              neighborBombs: _countNeighborBombs(cellIndex, cells),
-            )))
-        .values
-        .toList();
-  }
-
-  static List<CellData> _plantBombs(int length, double bombPercent) {
-    var bombsLeft = length * bombPercent;
+  List<CellData> _initializeData() {
+    final length = this.difficulty.width * this.difficulty.height;
+    var bombsLeft = this.difficulty.bombs;
     var cellsLeft = length;
 
     final cellIndexes = List<int>.generate(length, (i) => i)..shuffle();
@@ -186,23 +163,22 @@ class _GameInitializer {
       if (hasBomb) bombsLeft -= 1;
     }
 
-    return cells;
+    return cells
+        .asMap()
+        .map((cellIndex, v) => MapEntry(
+            cellIndex,
+            CellData(
+              state: v.state,
+              bomb: v.bomb,
+              neighborBombs: _getNeighborIndexes(cellIndex)
+                  .where((i) => cells[i].bomb)
+                  .length,
+            )))
+        .values
+        .toList();
   }
 
-  int _countNeighborBombs(int cellIndex, List<CellData> cellsData) =>
-      _cellHelper
-          .getNeighborIndexes(cellIndex)
-          .where((i) => cellsData[i].bomb)
-          .length;
-}
-
-class _CellHelper {
-  final int width;
-  final int height;
-
-  const _CellHelper([this.width, this.height]);
-
-  List<int> getNeighborIndexes(int cellIndex) {
+  List<int> _getNeighborIndexes(int cellIndex) {
     final int row = (cellIndex / width).floor();
     final int col = cellIndex - (row * width);
 

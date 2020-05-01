@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minesweeper/domain/game_state.dart';
 import 'package:minesweeper/screen/shared/bezel.dart';
+import 'package:minesweeper/screen/shared/digital_counter.dart';
 import 'package:minesweeper/screen/shared/menu_bar.dart';
 import 'package:minesweeper/screen/shared/menu_drawer.dart';
 import 'package:minesweeper/screen/shared/scrollable_content.dart';
@@ -8,7 +9,6 @@ import 'package:minesweeper/screen/shared/toolbar.dart';
 import 'package:minesweeper/screen/shared/widget_ext.dart';
 import 'package:provider/provider.dart';
 
-import 'bomb_counter.dart';
 import 'minefield/minefield.dart';
 import 'smiley_face.dart';
 import 'time_counter.dart';
@@ -16,12 +16,10 @@ import 'time_counter.dart';
 class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final int width = 30;
-    final int height = 30;
     const double borderSize = 10;
 
     return ChangeNotifierProvider(
-      builder: (context) => GameState(width: width, height: height),
+      builder: (context) => GameState(),
       child: Scaffold(
         drawer: MenuDrawer(),
         body: SafeArea(
@@ -36,30 +34,44 @@ class GameScreen extends StatelessWidget {
                 MenuBar(),
                 Expanded(
                   child: Bezel(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Bezel.inverse(
-                          child: Row(
-                            children: <Widget>[
-                              BombCounter(),
-                              Spacer(),
-                              SmileyButton(),
-                              Spacer(),
-                              TimeCounter(),
-                            ],
-                          ).withPadding(borderSize),
-                        ),
-                        SizedBox(height: borderSize),
-                        Expanded(
-                          child: Bezel.inverse(
-                            child: ScrollableContent(
-                              child: Minefield(width: width, height: height),
+                    child: Consumer<GameState>(
+                      builder: (context, game, child) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Bezel.inverse(
+                            child: Row(
+                              children: <Widget>[
+                                DigitalCounter(value: game.unmarkedBombs),
+                                Spacer(),
+                                SmileyButton(
+                                  state: game.smiley,
+                                  onPressed: game.restart,
+                                ),
+                                Spacer(),
+                                TimeCounter(
+                                  start: game.startTime,
+                                  playing: game.status == GameStatus.Play,
+                                ),
+                              ],
+                            ).withPadding(borderSize),
+                          ),
+                          SizedBox(height: borderSize),
+                          Expanded(
+                            child: Bezel.inverse(
+                              child: Center(
+                                child: ScrollableContent(
+                                  child: Minefield(
+                                    width: game.width,
+                                    height: game.height,
+                                    cellsData: game.cellsData,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ).withPadding(borderSize),
+                        ],
+                      ).withPadding(borderSize),
+                    ),
                   ),
                 ),
               ],

@@ -1,30 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:minesweeper/domain/game_state.dart';
 import 'package:minesweeper/screen/shared/digital_counter.dart';
-import 'package:provider/provider.dart';
 
-class TimeCounter extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<GameState>(builder: (context, game, child) {
-      return _TimeCounter(game.gameStart, game.status == GameStatus.Play);
-    });
-  }
-}
-
-class _TimeCounter extends StatefulWidget {
-  final int gameStart;
+class TimeCounter extends StatefulWidget {
+  final int start;
   final bool playing;
 
-  _TimeCounter(this.gameStart, this.playing);
+  TimeCounter({@required this.start, @required this.playing});
 
   @override
   _TimeCounterState createState() => _TimeCounterState();
 }
 
-class _TimeCounterState extends State<_TimeCounter> {
+class _TimeCounterState extends State<TimeCounter> {
   int seconds;
   Timer timer;
 
@@ -40,9 +29,9 @@ class _TimeCounterState extends State<_TimeCounter> {
   }
 
   @override
-  void didUpdateWidget(_TimeCounter oldWidget) {
+  void didUpdateWidget(TimeCounter oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.gameStart != widget.gameStart ||
+    if (oldWidget.start != widget.start ||
         oldWidget.playing != widget.playing) {
       // Stop the timer
       timer?.cancel();
@@ -54,7 +43,7 @@ class _TimeCounterState extends State<_TimeCounter> {
 
   void _startTimerWhenReady() {
     seconds = 0;
-    if (widget.playing && widget.gameStart != null) {
+    if (widget.playing && widget.start != null) {
       timer = Timer.periodic(
         const Duration(seconds: 1),
         (timer) => {

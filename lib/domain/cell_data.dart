@@ -1,15 +1,12 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 class CellData {
   final bool bomb;
   final CellState state;
   final int neighborBombs;
 
   const CellData({
-    @required this.bomb,
     this.state = CellState.covered,
-    this.neighborBombs,
+    this.bomb = false,
+    this.neighborBombs = 0,
   });
 
   CellData withState(CellState newState) {
