@@ -69,8 +69,7 @@ class GameState extends ChangeNotifier {
   void uncover(int cellIndex) {
     if (_gameStart == null) {
       _gameStart = DateTime.now().millisecondsSinceEpoch;
-      // TODO Make sure there is no bomb in cellIndex
-      _cellsData = _initializeData();
+      _cellsData = _initializeData(cellIndex);
     }
 
     var cell = _cellsData[cellIndex];
@@ -147,14 +146,22 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<CellData> _initializeData() {
+  /// Place the bombs
+  List<CellData> _initializeData(int startingCellIndex) {
     final length = this.difficulty.width * this.difficulty.height;
-    var bombsLeft = this.difficulty.bombs;
-    var cellsLeft = length;
 
-    final cellIndexes = List<int>.generate(length, (i) => i)..shuffle();
+    final cellIndexes = List<int>.generate(length, (i) => i)
+      ..shuffle()
+      ..remove(startingCellIndex);
+
+    var bombsLeft = this.difficulty.bombs;
+    var cellsLeft = length - 1;
 
     final cells = List<CellData>(length);
+
+    // No bombs in the starting cell
+    cells[startingCellIndex] = CellData(bomb: false);
+
     for (var i in cellIndexes) {
       double r = Random().nextDouble();
       double bombProbability = bombsLeft / cellsLeft;
