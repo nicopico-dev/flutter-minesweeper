@@ -1,4 +1,6 @@
-class CellData {
+import 'package:flutter/foundation.dart';
+
+class CellData with Diagnosticable {
   final bool bomb;
   final CellState state;
   final int neighborBombs;
@@ -15,6 +17,24 @@ class CellData {
       neighborBombs: this.neighborBombs,
       state: newState,
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties.add(EnumProperty('state', state));
+    properties.add(FlagProperty('bomb', value: bomb));
+  }
+
+  @override
+  String toStringShort() {
+    return bomb ? "X" : "_";
+  }
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return toStringShort();
   }
 }
 

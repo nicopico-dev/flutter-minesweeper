@@ -1,9 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:minesweeper/screen/shared/bezel.dart';
 
-class DigitalCounter extends StatelessWidget {
+class DigitalCounter extends StatelessWidget with DiagnosticableTreeMixin {
   final int value;
 
   const DigitalCounter({Key key, this.value})
@@ -45,5 +46,11 @@ class DigitalCounter extends StatelessWidget {
         ]),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('value', this.value));
   }
 }

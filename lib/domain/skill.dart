@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum Skill { Beginner, Intermediate, Expert, Custom }
 
 class Difficulty {
@@ -10,6 +12,9 @@ class Difficulty {
         assert(height > 0),
         assert(bombs > 0),
         assert(bombs <= width * height);
+
+  @override
+  String toString() => "$width x $height ($bombs bombs)";
 }
 
 extension SkillExtension on Skill {

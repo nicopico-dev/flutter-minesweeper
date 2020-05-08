@@ -9,7 +9,7 @@ import 'skill.dart';
 
 enum GameStatus { Play, Win, Lose }
 
-class GameState extends ChangeNotifier {
+class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   Skill _skill = Skill.Beginner;
   Difficulty _difficulty;
 
@@ -220,5 +220,28 @@ class GameState extends ChangeNotifier {
     }
 
     return neighborIndexes;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties.add(EnumProperty('skill', _skill));
+    properties.add(DiagnosticsProperty(
+      'difficulty',
+      _difficulty,
+      defaultValue: _skill?.difficulty,
+      missingIfNull: true,
+    ));
+    properties.add(EnumProperty('status', _status));
+    properties.add(EnumProperty('smiley', _smiley));
+    properties.add(IntProperty('gameStart', _gameStart));
+
+    /*
+    properties.add(IterableProperty(
+      'data',
+      _cellsData.partition(width),
+      style: DiagnosticsTreeStyle.sparse,
+    ));*/
   }
 }
