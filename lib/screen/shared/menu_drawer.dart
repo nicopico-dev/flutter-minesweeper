@@ -24,12 +24,16 @@ class MenuDrawer extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
-                child: Text(
-                  "Minesweeper",
-                  style: Theme.of(context)
-                      .textTheme
-                      .display2
-                      .copyWith(color: Colors.white),
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    "Minesweeper",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3
+                        .copyWith(color: Colors.white),
+                  ),
                 ),
                 decoration: BoxDecoration(color: Constants.WIN_BLUE),
               ),
@@ -50,7 +54,8 @@ class MenuDrawer extends StatelessWidget {
                 value: Skill.Expert,
                 groupValue: game.skill,
                 onChanged: onSkillChanged,
-              )
+              ),
+              // TODO Add "custom" difficulty level
             ],
           );
         },
