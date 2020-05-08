@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 enum Skill { Beginner, Intermediate, Expert, Custom }
 
 class Difficulty {

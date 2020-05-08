@@ -8,7 +8,9 @@ class DigitalCounter extends StatelessWidget with DiagnosticableTreeMixin {
   final int value;
 
   const DigitalCounter({Key key, this.value})
-      : assert(value == null || value >= 0 && value < 1000),
+      : assert(value != null),
+        assert(value >= 0),
+        assert(value < 1000),
         super(key: key);
 
   @override

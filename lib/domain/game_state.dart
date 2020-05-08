@@ -31,6 +31,7 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
 
   Skill get skill => _skill;
   set skill(Skill value) {
+    assert(value != null);
     _skill = value;
     _difficulty = value.difficulty;
     _startGame();
