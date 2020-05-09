@@ -10,6 +10,9 @@ class Difficulty {
         assert(height > 0),
         assert(bombs > 0),
         assert(bombs <= width * height);
+
+  @override
+  String toString() => "$width x $height ($bombs bombs)";
 }
 
 extension SkillExtension on Skill {

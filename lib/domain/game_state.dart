@@ -9,8 +9,8 @@ import 'skill.dart';
 
 enum GameStatus { Play, Win, Lose }
 
-class GameState extends ChangeNotifier {
-  Skill _skill = Skill.Beginner;
+class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
+  Skill _skill;
   Difficulty _difficulty;
 
   List<CellData> _cellsData;
@@ -19,6 +19,8 @@ class GameState extends ChangeNotifier {
   int _gameStart;
 
   GameState() {
+    _skill = Skill.Beginner;
+    _difficulty = _skill.difficulty;
     _startGame();
   }
 
@@ -30,21 +32,7 @@ class GameState extends ChangeNotifier {
   }
 
   Skill get skill => _skill;
-  set skill(Skill value) {
-    _skill = value;
-    _difficulty = value.difficulty;
-    _startGame();
-    notifyListeners();
-  }
-
-  Difficulty get difficulty => _difficulty ?? _skill.difficulty;
-  set difficulty(Difficulty value) {
-    _skill = Skill.Custom;
-    _difficulty = value;
-    _startGame();
-    notifyListeners();
-  }
-
+  Difficulty get difficulty => _difficulty;
   int get width => difficulty.width;
   int get height => difficulty.height;
 
@@ -66,11 +54,19 @@ class GameState extends ChangeNotifier {
     return bombs - marks;
   }
 
+  void setSkill(Skill skill, [Difficulty difficulty]) {
+    assert(skill != null);
+    assert(skill != Skill.Custom || difficulty != null);
+    _skill = skill;
+    _difficulty = skill.difficulty ?? difficulty;
+    _startGame();
+    notifyListeners();
+  }
+
   void uncover(int cellIndex) {
     if (_gameStart == null) {
       _gameStart = DateTime.now().millisecondsSinceEpoch;
-      // TODO Make sure there is no bomb in cellIndex
-      _cellsData = _initializeData();
+      _cellsData = _initializeData(cellIndex);
     }
 
     var cell = _cellsData[cellIndex];
@@ -147,14 +143,22 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<CellData> _initializeData() {
+  /// Place the bombs
+  List<CellData> _initializeData(int startingCellIndex) {
     final length = this.difficulty.width * this.difficulty.height;
-    var bombsLeft = this.difficulty.bombs;
-    var cellsLeft = length;
 
-    final cellIndexes = List<int>.generate(length, (i) => i)..shuffle();
+    final cellIndexes = List<int>.generate(length, (i) => i)
+      ..shuffle()
+      ..remove(startingCellIndex);
+
+    var bombsLeft = this.difficulty.bombs;
+    var cellsLeft = length - 1;
 
     final cells = List<CellData>(length);
+
+    // No bombs in the starting cell
+    cells[startingCellIndex] = CellData(bomb: false);
+
     for (var i in cellIndexes) {
       double r = Random().nextDouble();
       double bombProbability = bombsLeft / cellsLeft;
@@ -213,5 +217,28 @@ class GameState extends ChangeNotifier {
     }
 
     return neighborIndexes;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties.add(EnumProperty('skill', _skill));
+    properties.add(DiagnosticsProperty(
+      'difficulty',
+      _difficulty,
+      defaultValue: _skill?.difficulty,
+      missingIfNull: true,
+    ));
+    properties.add(EnumProperty('status', _status));
+    properties.add(EnumProperty('smiley', _smiley));
+    properties.add(IntProperty('gameStart', _gameStart));
+
+    /*
+    properties.add(IterableProperty(
+      'data',
+      _cellsData.partition(width),
+      style: DiagnosticsTreeStyle.sparse,
+    ));*/
   }
 }

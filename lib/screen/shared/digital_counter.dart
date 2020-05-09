@@ -1,13 +1,16 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:minesweeper/screen/shared/bezel.dart';
 
-class DigitalCounter extends StatelessWidget {
+class DigitalCounter extends StatelessWidget with DiagnosticableTreeMixin {
   final int value;
 
   const DigitalCounter({Key key, this.value})
-      : assert(value == null || value >= 0 && value < 1000),
+      : assert(value != null),
+        assert(value >= 0),
+        assert(value < 1000),
         super(key: key);
 
   @override
@@ -45,5 +48,11 @@ class DigitalCounter extends StatelessWidget {
         ]),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('value', this.value));
   }
 }

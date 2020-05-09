@@ -19,7 +19,7 @@ class GameScreen extends StatelessWidget {
     const double borderSize = 10;
 
     return ChangeNotifierProvider(
-      builder: (context) => GameState(),
+      create: (context) => GameState(),
       child: Scaffold(
         drawer: MenuDrawer(),
         body: SafeArea(
