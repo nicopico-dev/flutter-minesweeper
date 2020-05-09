@@ -3,19 +3,41 @@ import 'package:minesweeper/domain/skill.dart';
 import 'package:minesweeper/screen/shared/numeric_form_field.dart';
 
 class CustomDifficultyForm extends StatefulWidget {
+  final GlobalKey formKey;
   final bool enabled;
   final Difficulty difficulty;
-  final GlobalKey formKey;
+  final DifficultyReader reader;
 
   CustomDifficultyForm({
     Key key,
-    @required this.difficulty,
     this.formKey,
+    @required this.difficulty,
     this.enabled = true,
-  }) : super(key: key);
+    this.reader,
+  }) : super(key: key) {
+    reader?.initWith(difficulty);
+  }
 
   @override
   _CustomDifficultyFormState createState() => _CustomDifficultyFormState();
+}
+
+class DifficultyReader {
+  int _width;
+  int _height;
+  int _bombs;
+
+  set width(int value) => _width = value;
+  set height(int value) => _height = value;
+  set bombs(int value) => _bombs = value;
+
+  Difficulty get value => Difficulty(_width, _height, _bombs);
+
+  void initWith(Difficulty difficulty) {
+    _width = difficulty.width;
+    _height = difficulty.height;
+    _bombs = difficulty.bombs;
+  }
 }
 
 class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
@@ -40,24 +62,49 @@ class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
         NumericFormField(
           hintText: "largeur",
           icon: Icon(Icons.swap_horiz),
-          readOnly: widget.enabled,
+          enabled: widget.enabled,
+          validator: (value) => value.isEmpty || int.parse(value) <= 0
+              ? "La largeur doit être supérieure à 0"
+              : null,
           controller: _widthController,
+          onSaved: (value) => widget.reader?.width = value,
         ),
         NumericFormField(
           hintText: "hauteur",
           icon: Icon(Icons.swap_vert),
-          readOnly: widget.enabled,
+          enabled: widget.enabled,
+          validator: (value) => value.isEmpty || int.parse(value) <= 0
+              ? "La hauteur doit être supérieure à 0"
+              : null,
           controller: _heightController,
+          onSaved: (value) => widget.reader?.height = value,
         ),
         NumericFormField(
           hintText: "bombes",
           icon: Image.asset(
             "assets/images/bomb.png",
             scale: 1.5,
-            color: Colors.grey,
+            color: MaterialStateColor.resolveWith((states) {
+              var theme = Theme.of(context);
+              if (states.contains(MaterialState.selected)) {
+                return theme.accentColor;
+              } else {
+                return Colors.grey;
+              }
+            }),
           ),
-          readOnly: !widget.enabled,
+          enabled: widget.enabled,
+          validator: (value) {
+            if (value.isEmpty) {
+              return "Veuillez saisir une valeur";
+            } else if (int.parse(value) >= _computeGridSize()) {
+              return "Trop de bombes !";
+            } else {
+              return null;
+            }
+          },
           controller: _bombsController,
+          onSaved: (value) => widget.reader?.bombs = value,
         )
       ]),
     );
@@ -74,5 +121,11 @@ class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
     _widthController.text = difficulty.width?.toString();
     _heightController.text = difficulty.height?.toString();
     _bombsController.text = difficulty.bombs?.toString();
+  }
+
+  int _computeGridSize() {
+    return (int.tryParse(_widthController.text) *
+            int.tryParse(_heightController.text)) ??
+        0;
   }
 }

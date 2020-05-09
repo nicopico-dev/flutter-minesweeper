@@ -17,6 +17,8 @@ class MenuDrawer extends StatefulWidget {
 
 class _MenuDrawerState extends State<MenuDrawer> {
   final _formKey = GlobalKey<FormState>();
+  final _difficultyReader = DifficultyReader();
+
   Skill skill;
   Difficulty difficulty;
 
@@ -83,6 +85,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 formKey: _formKey,
                 difficulty: difficulty,
                 enabled: skill == Skill.Custom,
+                reader: _difficultyReader,
               ),
             ),
             SizedBox(height: 16),
@@ -99,19 +102,21 @@ class _MenuDrawerState extends State<MenuDrawer> {
   void onSkillChanged(Skill skill) {
     setState(() {
       this.skill = skill;
-      this.difficulty = skill?.difficulty;
+      this.difficulty = skill?.difficulty ?? this.difficulty;
     });
   }
 
   void onStartGame() {
     var game = Provider.of<GameState>(context, listen: false);
     if (skill == Skill.Custom) {
-      if (_formKey.currentState.validate()) {
-        game.difficulty = difficulty;
+      var formState = _formKey.currentState;
+      if (formState.validate()) {
+        formState.save();
+        game.setSkill(skill, _difficultyReader.value);
         Navigator.of(context).pop();
       }
     } else {
-      game.skill = skill;
+      game.setSkill(skill);
       Navigator.of(context).pop();
     }
   }

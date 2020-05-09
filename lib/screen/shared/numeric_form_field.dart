@@ -6,15 +6,19 @@ class NumericFormField extends StatelessWidget {
   final String hintText;
   final Widget icon;
   final TextEditingController controller;
-  final bool readOnly;
+  final bool enabled;
+  final FormFieldValidator<String> validator;
+  final FormFieldSetter<int> onSaved;
 
   const NumericFormField({
     Key key,
     this.labelText,
     this.hintText,
     this.icon,
-    this.readOnly = false,
+    this.enabled = true,
     this.controller,
+    this.validator,
+    this.onSaved,
   }) : super(key: key);
 
   @override
@@ -30,7 +34,10 @@ class NumericFormField extends StatelessWidget {
         hintText: hintText,
         icon: icon,
       ),
-      readOnly: readOnly,
+      enabled: enabled,
+      readOnly: !enabled,
+      validator: validator,
+      onSaved: (value) => onSaved(int.parse(value)),
     );
   }
 }

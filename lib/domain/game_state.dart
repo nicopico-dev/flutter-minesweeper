@@ -10,7 +10,7 @@ import 'skill.dart';
 enum GameStatus { Play, Win, Lose }
 
 class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
-  Skill _skill = Skill.Beginner;
+  Skill _skill;
   Difficulty _difficulty;
 
   List<CellData> _cellsData;
@@ -19,6 +19,8 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   int _gameStart;
 
   GameState() {
+    _skill = Skill.Beginner;
+    _difficulty = _skill.difficulty;
     _startGame();
   }
 
@@ -30,22 +32,7 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   }
 
   Skill get skill => _skill;
-  set skill(Skill value) {
-    assert(value != null);
-    _skill = value;
-    _difficulty = value.difficulty;
-    _startGame();
-    notifyListeners();
-  }
-
-  Difficulty get difficulty => _difficulty ?? _skill.difficulty;
-  set difficulty(Difficulty value) {
-    _skill = Skill.Custom;
-    _difficulty = value;
-    _startGame();
-    notifyListeners();
-  }
-
+  Difficulty get difficulty => _difficulty;
   int get width => difficulty.width;
   int get height => difficulty.height;
 
@@ -65,6 +52,15 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
       marks += cell.state == CellState.marked ? 1 : 0;
     }
     return bombs - marks;
+  }
+
+  void setSkill(Skill skill, [Difficulty difficulty]) {
+    assert(skill != null);
+    assert(skill != Skill.Custom || difficulty != null);
+    _skill = skill;
+    _difficulty = skill.difficulty ?? difficulty;
+    _startGame();
+    notifyListeners();
   }
 
   void uncover(int cellIndex) {
