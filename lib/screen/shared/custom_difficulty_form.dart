@@ -81,18 +81,7 @@ class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
         ),
         NumericFormField(
           hintText: "bombes",
-          icon: Image.asset(
-            "assets/images/bomb.png",
-            scale: 1.5,
-            color: MaterialStateColor.resolveWith((states) {
-              var theme = Theme.of(context);
-              if (states.contains(MaterialState.selected)) {
-                return theme.accentColor;
-              } else {
-                return Colors.grey;
-              }
-            }),
-          ),
+          icon: _BombIcon(),
           enabled: widget.enabled,
           validator: (value) {
             if (value.isEmpty) {
@@ -127,5 +116,19 @@ class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
     return (int.tryParse(_widthController.text) *
             int.tryParse(_heightController.text)) ??
         0;
+  }
+}
+
+class _BombIcon extends StatelessWidget {
+  const _BombIcon({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var iconTheme = IconTheme.of(context);
+    return Image.asset(
+      "assets/images/bomb.png",
+      scale: 1.5,
+      color: iconTheme.color,
+    );
   }
 }
