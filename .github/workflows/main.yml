@@ -1,34 +1,23 @@
-name: CI
+name: Continous Delivery
 on:
   push:
     branches: 
-      - master
-      - develop
+      - build/automate-version-bump
 jobs:
   build:
-    name: Build APK
+    name: Release for Android
     runs-on: ubuntu-latest
     env:
       CI: true
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-java@v1
+    - uses: actions/checkout@v2
+    - name: Bump build version
+      run: ./bump-build.sh
+    - run: echo ::set-env name=VERSION::$(./read-version.sh)
+    - uses: stefanzweifel/git-auto-commit-action@v4.2.0
       with:
-        java-version: '12.x'
-    - uses: subosito/flutter-action@v1
-      with:
-        channel: 'stable' 
-    - run: flutter pub get
-    - run: flutter test
-    - run: flutter build apk --release
-      env: 
-        ANDROID_KEY_ALIAS: ${{secrets.ANDROID_KEY_ALIAS}}
-        ANDROID_KEY_PASSWORD: ${{secrets.ANDROID_KEY_PASSWORD}}
-        ANDROID_STORE_PASSWORD: ${{secrets.ANDROID_STORE_PASSWORD}}
-    - name: Publish on App Center
-      uses: wzieba/AppCenter-Github-Action@v1.0.0
-      with:
-        appName: nicopico.dev/Flutter-Minesweeper
-        token: ${{secrets.APP_CENTER_TOKEN}}
-        group: Collaborators
-        file: build/app/outputs/apk/release/app-release.apk
+        commit_message: "Bump build version"
+        commit_author: GitHub Actions <actions@github.com> 
+        file_pattern: pubspec.yaml
+    - name: Add version tag
+      run: git tag version/${{ env.VERSION }} && git push --tags
