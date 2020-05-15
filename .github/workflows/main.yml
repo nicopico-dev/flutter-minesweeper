@@ -1,25 +1,23 @@
-name: CI
+name: Continous Delivery
 on:
   push:
     branches: 
       - build/automate-version-bump
 jobs:
   build:
-    name: Build APK
+    name: Release for Android
     runs-on: ubuntu-latest
     env:
       CI: true
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-java@v1
-      with:
-        java-version: '12.x'
-    - uses: subosito/flutter-action@v1
-      with:
-        channel: 'stable' 
+    - uses: actions/checkout@v2
     - name: Bump build version
       run: ./bump-build.sh
-    - name: Update dependencies
-      run: flutter pub get
-    - name: Run tests
-      run: flutter test
+    - run: echo ::set-env name=VERSION::$(./read-version.sh)
+    - uses: stefanzweifel/git-auto-commit-action@v4.2.0
+      with:
+        branch: '' 
+        commit_message: "Bump build version"
+        commit_author: GitHub Actions <actions@github.com> 
+        file_pattern: pubspec.yaml
+        tagging_message: version/${{ env.VERSION }} 
