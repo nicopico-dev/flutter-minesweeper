@@ -2,7 +2,8 @@ name: Continous Delivery
 on:
   push:
     branches: 
-      - build/automate-version-bump
+      - master
+      - develop
 jobs:
   build:
     name: Release for Android
@@ -11,10 +12,31 @@ jobs:
       CI: true
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
     - name: Bump build version
       run: ./bump-build.sh
     - run: echo ::set-env name=VERSION::$(./read-version.sh)
-    - uses: stefanzweifel/git-auto-commit-action@v4.2.0
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: 'stable' 
+    - run: flutter pub get
+    - run: flutter test
+    - run: flutter build apk --release
+      env: 
+        ANDROID_KEY_ALIAS: ${{secrets.ANDROID_KEY_ALIAS}}
+        ANDROID_KEY_PASSWORD: ${{secrets.ANDROID_KEY_PASSWORD}}
+        ANDROID_STORE_PASSWORD: ${{secrets.ANDROID_STORE_PASSWORD}}
+    - name: Publish on App Center
+      uses: wzieba/AppCenter-Github-Action@v1.0.0
+      with:
+        appName: nicopico.dev/Flutter-Minesweeper
+        token: ${{secrets.APP_CENTER_TOKEN}}
+        group: Collaborators
+        file: build/app/outputs/apk/release/app-release.apk
+    - name: Commit new version
+      uses: stefanzweifel/git-auto-commit-action@v4.2.0
       with:
         commit_message: "Bump build version"
         commit_author: GitHub Actions <actions@github.com> 
