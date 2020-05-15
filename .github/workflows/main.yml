@@ -2,8 +2,7 @@ name: CI
 on:
   push:
     branches: 
-      - master
-      - develop
+      - build/automate-version-bump
 jobs:
   build:
     name: Build APK
@@ -18,17 +17,9 @@ jobs:
     - uses: subosito/flutter-action@v1
       with:
         channel: 'stable' 
-    - run: flutter pub get
-    - run: flutter test
-    - run: flutter build apk --release
-      env: 
-        ANDROID_KEY_ALIAS: ${{secrets.ANDROID_KEY_ALIAS}}
-        ANDROID_KEY_PASSWORD: ${{secrets.ANDROID_KEY_PASSWORD}}
-        ANDROID_STORE_PASSWORD: ${{secrets.ANDROID_STORE_PASSWORD}}
-    - name: Publish on App Center
-      uses: wzieba/AppCenter-Github-Action@v1.0.0
-      with:
-        appName: nicopico.dev/Flutter-Minesweeper
-        token: ${{secrets.APP_CENTER_TOKEN}}
-        group: Collaborators
-        file: build/app/outputs/apk/release/app-release.apk
+    - name: Bump build version
+      run: ./bump-build.sh
+    - name: Update dependencies
+      run: flutter pub get
+    - name: Run tests
+      run: flutter test
