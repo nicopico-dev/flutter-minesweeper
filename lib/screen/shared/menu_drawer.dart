@@ -33,68 +33,70 @@ class _MenuDrawerState extends State<MenuDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            DrawerHeader(
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.topCenter,
-                child: Text(
-                  "Minesweeper",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline3
-                      .copyWith(color: Colors.white),
-                ),
-              ),
-              decoration: BoxDecoration(color: Constants.WIN_BLUE),
-            ),
-            RadioListTile<Skill>(
-              title: Text("Beginner"),
-              value: Skill.Beginner,
-              groupValue: skill,
-              onChanged: onSkillChanged,
-            ),
-            RadioListTile<Skill>(
-              title: Text("Intermediate"),
-              value: Skill.Intermediate,
-              groupValue: skill,
-              onChanged: onSkillChanged,
-            ),
-            RadioListTile<Skill>(
-              title: Text("Expert"),
-              value: Skill.Expert,
-              groupValue: skill,
-              onChanged: onSkillChanged,
-            ),
-            RadioListTile<Skill>(
-              title: Text("Custom"),
-              value: Skill.Custom,
-              groupValue: skill,
-              onChanged: onSkillChanged,
-            ),
-            Divider(),
-            Container(
-              padding: EdgeInsets.only(left: 8, right: 16, bottom: 16),
-              margin: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-              ),
-              child: CustomDifficultyForm(
-                formKey: _formKey,
-                difficulty: difficulty,
-                enabled: skill == Skill.Custom,
-                reader: _difficultyReader,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.topCenter,
+              child: Text(
+                "Minesweeper",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline3
+                    .copyWith(color: Colors.white),
               ),
             ),
-            SizedBox(height: 16),
-            RaisedButton(
-              child: Text("Start game!"),
-              onPressed: onStartGame,
-            )
-          ],
-        ),
+            decoration: BoxDecoration(color: Constants.WIN_BLUE),
+          ),
+          RadioListTile<Skill>(
+            title: Text("Beginner"),
+            value: Skill.Beginner,
+            groupValue: skill,
+            onChanged: onSkillChanged,
+          ),
+          RadioListTile<Skill>(
+            title: Text("Intermediate"),
+            value: Skill.Intermediate,
+            groupValue: skill,
+            onChanged: onSkillChanged,
+          ),
+          RadioListTile<Skill>(
+            title: Text("Expert"),
+            value: Skill.Expert,
+            groupValue: skill,
+            onChanged: onSkillChanged,
+          ),
+          RadioListTile<Skill>(
+            title: Text("Custom"),
+            value: Skill.Custom,
+            groupValue: skill,
+            onChanged: onSkillChanged,
+          ),
+          Divider(),
+          Container(
+            padding: EdgeInsets.only(left: 8, right: 16, bottom: 16),
+            margin: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+            ),
+            child: CustomDifficultyForm(
+              formKey: _formKey,
+              difficulty: difficulty,
+              enabled: skill == Skill.Custom,
+              reader: _difficultyReader,
+            ),
+          ),
+          SizedBox(height: 16),
+          Align(
+            child: RaisedButton(
+            child: Text("Start game!"),
+            onPressed: onStartGame,
+            ),
+          ),
+          SizedBox(height: 8),
+        ],
       ),
     );
   }
