@@ -16,8 +16,8 @@ jobs:
     - run: echo ::set-env name=VERSION::$(./read-version.sh)
     - uses: stefanzweifel/git-auto-commit-action@v4.2.0
       with:
-        branch: '' 
         commit_message: "Bump build version"
         commit_author: GitHub Actions <actions@github.com> 
         file_pattern: pubspec.yaml
-        tagging_message: version/${{ env.VERSION }} 
+    - name: Add version tag
+      run: git tag version/${{ env.VERSION }} && git push --tags
