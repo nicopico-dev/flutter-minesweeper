@@ -21,6 +21,8 @@ dependencies:
     sdk: flutter
 
   provider: ^4.0.0
+  shared_preferences: '>=0.5.7+1 <2.0.0'
+  tuple: ^1.0.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.7.3
