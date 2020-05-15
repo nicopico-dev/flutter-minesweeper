@@ -32,6 +32,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    // Workaround for Flutter bug "Textfield in Drawer does not move above keyboard when in focus"
+    // https://github.com/flutter/flutter/issues/38825
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom ?? 0;
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -91,11 +95,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
           SizedBox(height: 16),
           Align(
             child: RaisedButton(
-            child: Text("Start game!"),
-            onPressed: onStartGame,
+              child: Text("Start game!"),
+              onPressed: onStartGame,
             ),
           ),
           SizedBox(height: 8),
+          // Add a space with the same height as the keyboard to workaround bug 38825
+          // (see above)
+          SizedBox(height: keyboardHeight)
         ],
       ),
     );
