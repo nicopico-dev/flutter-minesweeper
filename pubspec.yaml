@@ -57,6 +57,11 @@ flutter_icons:
 flutter_launcher_name:
   name: Démineur Classic
 
+# This plugin is incompatible with the latest Android integration
+# but can be used to generate the different size of the icons
+# TODO Submit PR to the plugin author
 flutter_native_splash:
   image: assets/splash/bomb.png
-  color: '#FF020BFF'
+  color: '#020BFF'
+  android: false
+  ios: true
