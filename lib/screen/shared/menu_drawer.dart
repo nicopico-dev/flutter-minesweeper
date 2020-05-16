@@ -17,6 +17,7 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
+  final _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   final _formReader = DifficultyFormReader();
 
@@ -35,6 +36,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
+        controller: _scrollController,
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
@@ -105,6 +107,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
           Consumer<ScreenHeight>(
             builder: (_, screenHeight, __) {
               debugPrint("Keyboard height is ${screenHeight.keyboardHeight}");
+              if (screenHeight.isOpen) {
+                final offset = _getFormBottom();
+                _scrollTo(offset);
+              }
               return SizedBox(height: screenHeight.keyboardHeight);
             },
           ),
@@ -118,6 +124,20 @@ class _MenuDrawerState extends State<MenuDrawer> {
       this.skill = skill;
       this.difficulty = skill?.difficulty ?? this.difficulty;
     });
+  }
+
+  double _getFormBottom() {
+    RenderBox box = _formKey.currentContext.findRenderObject();
+    return box.localToGlobal(Offset.zero).dy + box.size.height;
+  }
+
+  _scrollTo(double offset) {
+    debugPrint("Scrolling to $offset");
+    _scrollController.animateTo(
+      offset,
+      duration: Duration(seconds: 1),
+      curve: Curves.ease,
+    );
   }
 
   void _onStartGame() {
