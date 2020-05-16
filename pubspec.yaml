@@ -23,14 +23,11 @@ dependencies:
   provider: ^4.0.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.7.3
+
   flutter_test:
     sdk: flutter
 
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
 flutter:
 
   uses-material-design: true
@@ -47,3 +44,9 @@ flutter:
       fonts:
         - asset: assets/fonts/verdana-bold.ttf
       
+flutter_icons:
+  image_path: assets/launcher/bomb.png
+  android: true
+  ios: true
+  adaptive_icon_background: '#FF020BFF'
+  adaptive_icon_foreground: assets/launcher/bomb_adaptive.png
