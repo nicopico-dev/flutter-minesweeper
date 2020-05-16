@@ -123,8 +123,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
       if (formState.validate()) {
         formState.save();
         state.customDifficulty = _difficultyReader.value;
+        Navigator.of(context).pop();
       }
-      Navigator.of(context).pop();
     } else {
       Navigator.of(context).pop();
     }
