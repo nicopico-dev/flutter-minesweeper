@@ -1,6 +1,5 @@
+import 'package:minesweeper/domain/skill.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'domain/skill.dart';
 
 const _SKILL_KEY = "skill";
 const _CUSTOM_WIDTH_KEY = "custom_width";
@@ -30,7 +29,7 @@ class Preferences {
     prefs.setString(_SKILL_KEY, value.toString());
   }
 
-  Future<Difficulty> getDifficulty() async {
+  Future<Difficulty> getCustomDifficulty() async {
     var prefs = await _prefs;
     if (prefs.containsKey(_CUSTOM_WIDTH_KEY) &&
         prefs.containsKey(_CUSTOM_HEIGHT_KEY) &&
@@ -45,7 +44,7 @@ class Preferences {
     }
   }
 
-  void setDifficulty(Difficulty value) async {
+  void setCustomDifficulty(Difficulty value) async {
     var prefs = await _prefs;
     prefs.setInt(_CUSTOM_WIDTH_KEY, value.width);
     prefs.setInt(_CUSTOM_HEIGHT_KEY, value.height);

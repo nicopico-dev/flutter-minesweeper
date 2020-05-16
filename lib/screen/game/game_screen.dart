@@ -18,61 +18,64 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     const double borderSize = 10;
 
-    return Scaffold(
-      drawer: MenuDrawer(),
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.fromBorderSide(BorderSide()),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Toolbar(title: "Minesweeper"),
-              MenuBar(),
-              Expanded(
-                child: Bezel(
-                  child: Consumer<GameState>(
-                    builder: (context, game, child) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Bezel.inverse(
-                          child: Row(
-                            children: <Widget>[
-                              DigitalCounter(value: game.unmarkedBombs),
-                              Spacer(),
-                              SmileyButton(
-                                state: game.smiley,
-                                onPressed: game.restart,
-                              ),
-                              Spacer(),
-                              TimeCounter(
-                                start: game.startTime,
-                                playing: game.status == GameStatus.Play,
-                              ),
-                            ],
-                          ).withPadding(borderSize),
-                        ),
-                        SizedBox(height: borderSize),
-                        Expanded(
-                          child: Bezel.inverse(
-                            child: Center(
-                              child: ScrollableContent(
-                                child: Minefield(
-                                  width: game.width,
-                                  height: game.height,
-                                  cellsData: game.cellsData,
+    return ChangeNotifierProvider(
+      create: (context) => GameState(),
+      child: Scaffold(
+        drawer: MenuDrawer(),
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.fromBorderSide(BorderSide()),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Toolbar(title: "Minesweeper"),
+                MenuBar(),
+                Expanded(
+                  child: Bezel(
+                    child: Consumer<GameState>(
+                      builder: (context, game, child) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Bezel.inverse(
+                            child: Row(
+                              children: <Widget>[
+                                DigitalCounter(value: game.unmarkedBombs),
+                                Spacer(),
+                                SmileyButton(
+                                  state: game.smiley,
+                                  onPressed: game.restart,
+                                ),
+                                Spacer(),
+                                TimeCounter(
+                                  start: game.startTime,
+                                  playing: game.status == GameStatus.Play,
+                                ),
+                              ],
+                            ).withPadding(borderSize),
+                          ),
+                          SizedBox(height: borderSize),
+                          Expanded(
+                            child: Bezel.inverse(
+                              child: Center(
+                                child: ScrollableContent(
+                                  child: Minefield(
+                                    width: game.width,
+                                    height: game.height,
+                                    cellsData: game.cellsData,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ).withPadding(borderSize),
+                        ],
+                      ).withPadding(borderSize),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -9,11 +9,7 @@ import 'skill.dart';
 
 enum GameStatus { Play, Win, Lose }
 
-typedef void SkillChangeListener(Skill skill, Difficulty difficulty);
-
 class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
-  final SkillChangeListener onSkillChanged;
-
   Skill _skill;
   Difficulty _difficulty;
 
@@ -22,14 +18,9 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   SmileyState _smiley;
   int _gameStart;
 
-  GameState({
-    Skill initialSkill = Skill.Beginner,
-    Difficulty customDifficulty,
-    this.onSkillChanged,
-  }) {
-    assert(customDifficulty != null || initialSkill != Skill.Custom);
-    _skill = initialSkill;
-    _difficulty = _skill.difficulty ?? customDifficulty;
+  GameState() {
+    _skill = Skill.Beginner;
+    _difficulty = _skill.difficulty;
     _startGame();
   }
 
@@ -68,7 +59,6 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
     assert(skill != Skill.Custom || difficulty != null);
     _skill = skill;
     _difficulty = skill.difficulty ?? difficulty;
-    onSkillChanged?.call(_skill, _difficulty);
     _startGame();
     notifyListeners();
   }
