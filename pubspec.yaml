@@ -23,14 +23,13 @@ dependencies:
   provider: ^4.0.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.7.3
+  flutter_launcher_name: ^0.0.1
+  flutter_native_splash: ^0.1.9
+
   flutter_test:
     sdk: flutter
 
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
 flutter:
 
   uses-material-design: true
@@ -47,3 +46,22 @@ flutter:
       fonts:
         - asset: assets/fonts/verdana-bold.ttf
       
+flutter_icons:
+  android: true
+  image_path_android: assets/launcher/bomb_android.png
+  adaptive_icon_foreground: assets/launcher/bomb_adaptive.png
+  adaptive_icon_background: '#FF020BFF'
+  ios: true
+  image_path_ios: assets/launcher/bomb_ios.png
+
+flutter_launcher_name:
+  name: Démineur Classic
+
+# This plugin is incompatible with the latest Android integration
+# but can be used to generate the different size of the icons
+# TODO Submit PR to the plugin author
+flutter_native_splash:
+  image: assets/splash/bomb.png
+  color: '#020BFF'
+  android: false
+  ios: true
