@@ -10,7 +10,6 @@ import 'skill.dart';
 enum GameStatus { Play, Win, Lose }
 
 class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
-  Skill _skill;
   Difficulty _difficulty;
 
   List<CellData> _cellsData;
@@ -18,10 +17,14 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   SmileyState _smiley;
   int _gameStart;
 
-  GameState() {
-    _skill = Skill.Beginner;
-    _difficulty = _skill.difficulty;
+  GameState({@required difficulty}) : _difficulty = difficulty {
     _startGame();
+  }
+
+  set difficulty(Difficulty value) {
+    _difficulty = value;
+    _startGame();
+    notifyListeners();
   }
 
   void _startGame() {
@@ -31,10 +34,8 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
     _cellsData = List.filled(width * height, CellData(bomb: false));
   }
 
-  Skill get skill => _skill;
-  Difficulty get difficulty => _difficulty;
-  int get width => difficulty.width;
-  int get height => difficulty.height;
+  int get width => _difficulty.width;
+  int get height => _difficulty.height;
 
   UnmodifiableListView<CellData> get cellsData =>
       UnmodifiableListView(_cellsData);
@@ -46,21 +47,12 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   int get startTime => _gameStart;
 
   int get unmarkedBombs {
-    int bombs = difficulty.bombs;
+    int bombs = _difficulty.bombs;
     int marks = 0;
     for (final cell in _cellsData) {
       marks += cell.state == CellState.marked ? 1 : 0;
     }
     return bombs - marks;
-  }
-
-  void setSkill(Skill skill, [Difficulty difficulty]) {
-    assert(skill != null);
-    assert(skill != Skill.Custom || difficulty != null);
-    _skill = skill;
-    _difficulty = skill.difficulty ?? difficulty;
-    _startGame();
-    notifyListeners();
   }
 
   void uncover(int cellIndex) {
@@ -145,13 +137,13 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
 
   /// Place the bombs
   List<CellData> _initializeData(int startingCellIndex) {
-    final length = this.difficulty.width * this.difficulty.height;
+    final length = this._difficulty.width * this._difficulty.height;
 
     final cellIndexes = List<int>.generate(length, (i) => i)
       ..shuffle()
       ..remove(startingCellIndex);
 
-    var bombsLeft = this.difficulty.bombs;
+    var bombsLeft = this._difficulty.bombs;
     var cellsLeft = length - 1;
 
     final cells = List<CellData>(length);
@@ -223,13 +215,7 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
 
-    properties.add(EnumProperty('skill', _skill));
-    properties.add(DiagnosticsProperty(
-      'difficulty',
-      _difficulty,
-      defaultValue: _skill?.difficulty,
-      missingIfNull: true,
-    ));
+    properties.add(DiagnosticsProperty('difficulty', _difficulty));
     properties.add(EnumProperty('status', _status));
     properties.add(EnumProperty('smiley', _smiley));
     properties.add(IntProperty('gameStart', _gameStart));

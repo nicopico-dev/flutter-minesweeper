@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:minesweeper/domain/game_state.dart';
+import 'package:minesweeper/domain/difficulty_state.dart';
 import 'package:minesweeper/domain/skill.dart';
 import 'package:minesweeper/screen/shared/constants.dart';
 import 'package:provider/provider.dart';
@@ -25,9 +25,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
   @override
   void initState() {
     super.initState();
-    GameState game = Provider.of<GameState>(context, listen: false);
-    skill = game.skill;
-    difficulty = game.difficulty;
+    var state = Provider.of<DifficultyState>(context, listen: false);
+    skill = state.skill;
+    difficulty = state.difficulty;
   }
 
   @override
@@ -116,16 +116,16 @@ class _MenuDrawerState extends State<MenuDrawer> {
   }
 
   void onStartGame() {
-    var game = Provider.of<GameState>(context, listen: false);
+    var state = Provider.of<DifficultyState>(context, listen: false);
+    state.skill = skill;
     if (skill == Skill.Custom) {
       var formState = _formKey.currentState;
       if (formState.validate()) {
         formState.save();
-        game.setSkill(skill, _difficultyReader.value);
-        Navigator.of(context).pop();
+        state.customDifficulty = _difficultyReader.value;
       }
+      Navigator.of(context).pop();
     } else {
-      game.setSkill(skill);
       Navigator.of(context).pop();
     }
   }
