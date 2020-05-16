@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:minesweeper/domain/difficulty_state.dart';
 import 'package:minesweeper/domain/skill.dart';
 import 'package:minesweeper/screen/shared/constants.dart';
@@ -32,10 +33,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    // Workaround for Flutter bug "Textfield in Drawer does not move above keyboard when in focus"
-    // https://github.com/flutter/flutter/issues/38825
-    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom ?? 0;
-
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -100,9 +97,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
             ),
           ),
           SizedBox(height: 8),
-          // Add a space with the same height as the keyboard to workaround bug 38825
-          // (see above)
-          SizedBox(height: keyboardHeight)
+          // Workaround for Flutter bug "Textfield in Drawer does not move above keyboard when in focus"
+          // https://github.com/flutter/flutter/issues/38825
+          // Add a space with the same height as the keyboard
+          Consumer<ScreenHeight>(
+            builder: (_, screenHeight, __) => SizedBox(
+              height: screenHeight.keyboardHeight,
+            ),
+          ),
         ],
       ),
     );
