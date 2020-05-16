@@ -6,23 +6,23 @@ class CustomDifficultyForm extends StatefulWidget {
   final GlobalKey formKey;
   final bool enabled;
   final Difficulty difficulty;
-  final DifficultyReader reader;
+  final DifficultyFormReader formReader;
 
   CustomDifficultyForm({
     Key key,
     this.formKey,
     @required this.difficulty,
     this.enabled = true,
-    this.reader,
+    this.formReader,
   }) : super(key: key) {
-    reader?.initWith(difficulty);
+    formReader?.initWith(difficulty);
   }
 
   @override
   _CustomDifficultyFormState createState() => _CustomDifficultyFormState();
 }
 
-class DifficultyReader {
+class DifficultyFormReader {
   int _width;
   int _height;
   int _bombs;
@@ -67,7 +67,7 @@ class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
               ? "La largeur doit être supérieure à 0"
               : null,
           controller: _widthController,
-          onSaved: (value) => widget.reader?.width = value,
+          onSaved: (value) => widget.formReader?.width = value,
         ),
         NumericFormField(
           hintText: "hauteur",
@@ -77,7 +77,7 @@ class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
               ? "La hauteur doit être supérieure à 0"
               : null,
           controller: _heightController,
-          onSaved: (value) => widget.reader?.height = value,
+          onSaved: (value) => widget.formReader?.height = value,
         ),
         NumericFormField(
           hintText: "bombes",
@@ -93,8 +93,9 @@ class _CustomDifficultyFormState extends State<CustomDifficultyForm> {
             }
           },
           controller: _bombsController,
-          onSaved: (value) => widget.reader?.bombs = value,
-        )
+          onSaved: (value) => widget.formReader?.bombs = value,
+        ),
+        // TODO Display a "complexity bar" -> bombs / total cells
       ]),
     );
   }

@@ -18,7 +18,7 @@ class MenuDrawer extends StatefulWidget {
 
 class _MenuDrawerState extends State<MenuDrawer> {
   final _formKey = GlobalKey<FormState>();
-  final _difficultyReader = DifficultyReader();
+  final _formReader = DifficultyFormReader();
 
   Skill skill;
   Difficulty difficulty;
@@ -55,25 +55,25 @@ class _MenuDrawerState extends State<MenuDrawer> {
             title: Text("Beginner"),
             value: Skill.Beginner,
             groupValue: skill,
-            onChanged: onSkillChanged,
+            onChanged: _onSkillChanged,
           ),
           RadioListTile<Skill>(
             title: Text("Intermediate"),
             value: Skill.Intermediate,
             groupValue: skill,
-            onChanged: onSkillChanged,
+            onChanged: _onSkillChanged,
           ),
           RadioListTile<Skill>(
             title: Text("Expert"),
             value: Skill.Expert,
             groupValue: skill,
-            onChanged: onSkillChanged,
+            onChanged: _onSkillChanged,
           ),
           RadioListTile<Skill>(
             title: Text("Custom"),
             value: Skill.Custom,
             groupValue: skill,
-            onChanged: onSkillChanged,
+            onChanged: _onSkillChanged,
           ),
           Divider(),
           Container(
@@ -86,14 +86,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
               formKey: _formKey,
               difficulty: difficulty,
               enabled: skill == Skill.Custom,
-              reader: _difficultyReader,
+              formReader: _formReader,
             ),
           ),
           SizedBox(height: 16),
           Align(
             child: RaisedButton(
               child: Text("Start game!"),
-              onPressed: onStartGame,
+              onPressed: _onStartGame,
             ),
           ),
           SizedBox(height: 8),
@@ -113,21 +113,21 @@ class _MenuDrawerState extends State<MenuDrawer> {
     );
   }
 
-  void onSkillChanged(Skill skill) {
+  void _onSkillChanged(Skill skill) {
     setState(() {
       this.skill = skill;
       this.difficulty = skill?.difficulty ?? this.difficulty;
     });
   }
 
-  void onStartGame() {
+  void _onStartGame() {
     var state = Provider.of<DifficultyState>(context, listen: false);
     state.skill = skill;
     if (skill == Skill.Custom) {
       var formState = _formKey.currentState;
       if (formState.validate()) {
         formState.save();
-        state.customDifficulty = _difficultyReader.value;
+        state.customDifficulty = _formReader.value;
         Navigator.of(context).pop();
       }
     } else {
