@@ -100,10 +100,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
           // Workaround for Flutter bug "Textfield in Drawer does not move above keyboard when in focus"
           // https://github.com/flutter/flutter/issues/38825
           // Add a space with the same height as the keyboard
+          // Note: the android app must not be in full screen otherwise the keyboard height is not detected
+          // https://stackoverflow.com/questions/59197602/keyboard-not-being-detected-mediaquery-ofcontext-viewinsets-bottom-always-ret/59197884#59197884
           Consumer<ScreenHeight>(
-            builder: (_, screenHeight, __) => SizedBox(
-              height: screenHeight.keyboardHeight,
-            ),
+            builder: (_, screenHeight, __) {
+              debugPrint("Keyboard height is ${screenHeight.keyboardHeight}");
+              return SizedBox(height: screenHeight.keyboardHeight);
+            },
           ),
         ],
       ),
