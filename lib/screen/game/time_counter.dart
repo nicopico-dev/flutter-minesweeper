@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:minesweeper/screen/shared/digital_counter.dart';
@@ -25,7 +26,8 @@ class _TimeCounterState extends State<TimeCounter> {
 
   @override
   Widget build(BuildContext context) {
-    return DigitalCounter(value: seconds);
+    // Make sure the value is no bigger than 999
+    return DigitalCounter(value: min(seconds, 999));
   }
 
   @override
