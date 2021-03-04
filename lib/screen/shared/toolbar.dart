@@ -44,7 +44,7 @@ class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Scaffold.of(context, nullOk: true)?.openDrawer(),
+      onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
       child: Container(
         width: 38,
         height: 38,

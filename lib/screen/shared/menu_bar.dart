@@ -23,7 +23,7 @@ class MenuBar extends StatelessWidget {
       child: Row(children: <Widget>[
         SizedBox(width: 8),
         InkWell(
-          onTap: () => Scaffold.of(context, nullOk: true)?.openDrawer(),
+          onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
           child: RichText(
             text: TextSpan(
               text: 'G',
