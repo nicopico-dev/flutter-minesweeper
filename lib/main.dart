@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minesweeper/domain/difficulty_state.dart';
 import 'package:minesweeper/screen/game/game_screen.dart';
+import 'package:minesweeper/screen/shared/styles.dart';
 import 'package:minesweeper/service/preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
           return gameState..difficulty = difficultyState.difficulty;
         },
         child: MaterialApp(
+          theme: theme,
           title: 'Minesweeper Demo',
           home: GameScreen(),
         ),
