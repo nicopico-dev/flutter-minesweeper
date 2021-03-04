@@ -22,8 +22,10 @@ class DigitalCounter extends StatelessWidget with DiagnosticableTreeMixin {
     );
     final valueStyle = baseStyle.copyWith(color: Color(0xFFB72317));
 
+    // Platform.is is not currently supported on the Web platform (cause error)
+    // https://stackoverflow.com/questions/57937280/how-can-i-detect-if-my-flutter-app-is-running-in-the-web
     EdgeInsets counterPadding;
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       counterPadding = EdgeInsets.all(4);
     } else {
       counterPadding = EdgeInsets.zero;
