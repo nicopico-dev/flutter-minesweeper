@@ -93,7 +93,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           ),
           SizedBox(height: 16),
           Align(
-            child: RaisedButton(
+            child: ElevatedButton(
               child: Text("Start game!"),
               onPressed: _onStartGame,
             ),

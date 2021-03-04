@@ -27,7 +27,7 @@ class NumericFormField extends StatelessWidget {
       controller: controller,
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly
+        FilteringTextInputFormatter.digitsOnly
       ],
       decoration: InputDecoration(
         labelText: labelText,

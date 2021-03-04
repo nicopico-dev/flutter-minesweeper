@@ -139,27 +139,20 @@ class GameState extends ChangeNotifier with DiagnosticableTreeMixin {
   List<CellData> _initializeData(int startingCellIndex) {
     final length = this._difficulty.width * this._difficulty.height;
 
-    final cellIndexes = List<int>.generate(length, (i) => i)
-      ..shuffle()
-      ..remove(startingCellIndex);
-
     var bombsLeft = this._difficulty.bombs;
     var cellsLeft = length - 1;
 
-    final cells = List<CellData>(length);
-
-    // No bombs in the starting cell
-    cells[startingCellIndex] = CellData(bomb: false);
-
-    for (var i in cellIndexes) {
+    final cells = List<CellData>.generate(length, (index) {
       double r = Random().nextDouble();
       double bombProbability = bombsLeft / cellsLeft;
-      bool hasBomb = r <= bombProbability;
-      cells[i] = CellData(bomb: hasBomb);
+      // No bombs in the starting cell
+      bool hasBomb = index != startingCellIndex && r <= bombProbability;
 
       cellsLeft -= 1;
       if (hasBomb) bombsLeft -= 1;
-    }
+
+      return CellData(bomb: hasBomb);
+    });
 
     return cells
         .asMap()
