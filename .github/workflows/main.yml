@@ -17,7 +17,7 @@ jobs:
         java-version: '12.x'
     - name: Bump build version
       run: ./bump-build.sh
-    - run: echo ::set-env name=VERSION::$(./read-version.sh)
+    - run: echo "VERSION="$(./read-version.sh) >> $GITHUB_ENV
     - uses: subosito/flutter-action@v1
       with:
         channel: 'stable' 
@@ -29,14 +29,14 @@ jobs:
         ANDROID_KEY_PASSWORD: ${{secrets.ANDROID_KEY_PASSWORD}}
         ANDROID_STORE_PASSWORD: ${{secrets.ANDROID_STORE_PASSWORD}}
     - name: Publish on App Center
-      uses: wzieba/AppCenter-Github-Action@v1.0.0
+      uses: wzieba/AppCenter-Github-Action@v1
       with:
         appName: nicopico.dev/Flutter-Minesweeper
         token: ${{secrets.APP_CENTER_TOKEN}}
         group: Collaborators
         file: build/app/outputs/apk/release/app-release.apk
     - name: Commit new version
-      uses: stefanzweifel/git-auto-commit-action@v4.2.0
+      uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: "Bump build version"
         commit_author: GitHub Actions <actions@github.com> 
